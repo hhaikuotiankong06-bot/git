@@ -91,7 +91,13 @@ canvas#game{width:100%;height:auto;display:block;background:#10141a;touch-action
 .card .art{height:118px;overflow:hidden;position:relative;background:#0d1015;}
 .card .art svg{width:100%;height:100%;display:block;}
 .card .art img{width:100%;height:100%;object-fit:cover;display:block;}
-.card .meta{padding:6px 8px 8px;border-top:2px solid var(--yel);}
+.card{display:flex;flex-direction:column;}
+.card .meta{padding:6px 8px 8px;border-top:2px solid var(--yel);flex:1;}
+.card .meta .el.info{min-height:4.4em;}
+.card .el.st{min-height:2.9em;}
+.card .el.bond{min-height:4.4em;}
+.card .el.cuq{min-height:2.9em;}
+.card .el.ph{visibility:hidden;}
 .card .nm{font-size:14px;font-weight:700;display:flex;justify-content:space-between;align-items:center;}
 .card .el{font-size:11px;color:var(--dim);margin-top:1px;}
 .card .el b{color:var(--cyan);font-family:ui-monospace,Menlo,monospace;}
@@ -699,7 +705,7 @@ var BONDS=[
 ];
 function bondHintFor(op){
  var out=[];
- BONDS.forEach(function(b){ if(b.a===op.key) out.push(b.b+" → "+b.label); else if(b.b===op.key) out.push(b.a+" → "+b.label); });
+ BONDS.forEach(function(b){ if(b.a===op.key) out.push(b.b); else if(b.b===op.key) out.push(b.a); });
  return out.length?("可成键："+out.join("、")):"";
 }
 function findPlaced(key){ var r=null; S.placed.forEach(function(p){ if(p.def.key===key&&!p.gone) r=p; }); return r; }
@@ -1276,11 +1282,11 @@ function renderDeck(){
    card.innerHTML='<span class="cls">'+op.cls+'</span><span class="cost">'+op.cost+'</span>'
      +'<div class="art">'+portrait(op,"d")+'<span class="lock" data-lock>需完成电子排布</span></div>'
      +'<div class="meta"><div class="nm">'+op.name+'</div>'
-     +'<div class="el"><b>'+op.sym+'</b> · '+op.z+' 号元素 · 元素 '+op.el+' · 价电子 '+op.val+'</div>'
+     +'<div class="el info"><b>'+op.sym+'</b> · '+op.z+' 号元素 · 元素 '+op.el+' · 价电子 '+op.val+'</div>'
      +'<div class="el st">DPS '+Math.round(op.atk/op.intv)+' · 射程 '+op.range+'格 · 挡 '+op.block+'</div>'
      +'<div class="nrgy" data-nrg><i></i></div>'
-     +(bondHint?'<div class="el bond">🔗 '+bondHint+'</div>':"")
-     +(op.key==="Cu"?'<div class="el cuq" data-cuq>'+cuTraitText()+'</div>':"")
+     +(bondHint?'<div class="el bond">🔗 '+bondHint+'</div>':'<div class="el bond ph">&nbsp;</div>')
+     +(op.key==="Cu"?'<div class="el cuq" data-cuq>'+cuTraitText()+'</div>':'<div class="el cuq ph">&nbsp;</div>')
      +'</div>';
    card.addEventListener("click",function(){ if(card._lpFired){ card._lpFired=false; return; } onCard(op,card); });
    addLongPress(card,function(){ showOpDetail(op); });
