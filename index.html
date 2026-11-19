@@ -26,29 +26,30 @@ button{font-family:var(--font);cursor:pointer;min-height:2.25rem;}
 
 /* ---------- HUD ---------- */
 .hud{display:flex;flex-wrap:wrap;gap:8px;align-items:stretch;margin-bottom:10px;}
-.hud .brand{display:flex;align-items:center;gap:10px;background:var(--panel);border:1px solid var(--line);
+.hud .brand{display:flex;align-items:center;gap:10px;background:linear-gradient(180deg,#181e28,#10141a);border:1px solid var(--line);box-shadow:0 2px 8px rgba(0,0,0,.35);
   padding:6px 14px 6px 10px;clip-path:polygon(0 0,100% 0,calc(100% - 14px) 100%,0 100%);}
 .hud .brand .logo{width:34px;height:34px;flex:none;}
 .hud .brand b{font-size:19px;letter-spacing:2px;}
 .hud .brand span{display:block;font-size:10px;color:var(--faint);letter-spacing:3px;}
-.stat{background:var(--panel);border:1px solid var(--line);padding:5px 14px;min-width:86px;
+.stat{background:linear-gradient(180deg,#171c25,#10141a);border:1px solid var(--line);padding:5px 14px;min-width:86px;box-shadow:0 2px 8px rgba(0,0,0,.3);
   clip-path:polygon(0 0,100% 0,calc(100% - 10px) 100%,0 100%);}
 .stat small{display:block;font-size:10px;color:var(--faint);letter-spacing:2px;}
 .stat b{font-size:20px;font-variant-numeric:tabular-nums;}
 .stat b.y{color:var(--yel);} .stat b.r{color:var(--red);} .stat b.c{color:var(--cyan);}
 .hud .spacer{flex:1;}
-.hbtn{background:var(--panel2);color:var(--ink);border:1px solid var(--line2);padding:6px 16px;font-size:14px;
+.hbtn{background:linear-gradient(180deg,#1e242e,#14181f);color:var(--ink);border:1px solid var(--line2);padding:6px 16px;font-size:14px;box-shadow:0 2px 8px rgba(0,0,0,.35);transition:filter .15s;}
   clip-path:polygon(0 0,100% 0,calc(100% - 10px) 100%,0 100%);}
 .hbtn:hover{border-color:var(--yel);color:var(--yel2);}
-.hbtn.primary{background:var(--yel);color:#141414;border-color:var(--yel);font-weight:700;}
+.hbtn.primary{background:linear-gradient(180deg,#ffe45c,#f2c81f);color:#141414;border-color:var(--yel);font-weight:700;box-shadow:0 2px 10px rgba(247,208,56,.25);}
 .hbtn.primary:hover{color:#000;background:var(--yel2);}
+.hbtn:active{transform:translateY(1px);}
 .hbtn:disabled{opacity:.38;cursor:not-allowed;}
 .hbtn:disabled:hover{border-color:var(--line2);color:var(--ink);background:var(--panel2);}
 
 /* ---------- Layout ---------- */
 .main{display:flex;gap:12px;align-items:flex-start;}
 .stageWrap{flex:1;min-width:0;}
-.stageBox{position:relative;background:#0e1218;border:1px solid var(--line);padding:8px;}
+.stageBox{position:relative;background:#0e1218;border:1px solid var(--line);padding:8px;border-radius:8px;box-shadow:0 6px 20px rgba(0,0,0,.4);}
 .stageBox::before{content:"OPERATION 0-1 · 电子防线";position:absolute;top:-9px;left:14px;background:var(--bg);
   padding:0 8px;font-size:10px;letter-spacing:3px;color:var(--faint);z-index:2;}
 canvas#game{width:100%;height:auto;display:block;background:#10141a;touch-action:manipulation;}
@@ -57,7 +58,7 @@ canvas#game{width:100%;height:auto;display:block;background:#10141a;touch-action
 .placeHint.on{display:flex;}
 .placeHint button{background:transparent;border:1px solid var(--yel);color:var(--yel2);padding:2px 12px;min-height:2rem;}
 .side{width:252px;flex:none;display:flex;flex-direction:column;gap:12px;}
-.panel{background:var(--panel);border:1px solid var(--line);padding:12px 14px;}
+.panel{background:linear-gradient(180deg,#141920,#10141a);border:1px solid var(--line);padding:12px 14px;border-radius:10px;box-shadow:0 4px 14px rgba(0,0,0,.3);}
 .panel h3{margin:0 0 8px;font-size:12px;letter-spacing:3px;color:var(--dim);font-weight:600;}
 .panel h3::before{content:"";display:inline-block;width:8px;height:8px;background:var(--yel);margin-right:8px;
   clip-path:polygon(0 0,100% 50%,0 100%);}
@@ -78,9 +79,10 @@ canvas#game{width:100%;height:auto;display:block;background:#10141a;touch-action
 .deckTitle span{font-size:12px;color:var(--faint);}
 .deck{display:flex;gap:10px;overflow-x:auto;padding:4px 2px 12px;scrollbar-width:thin;}
 .card{flex:none;width:118px;background:linear-gradient(180deg,#1a2029,#10141b);border:1px solid var(--line2);
-  cursor:pointer;position:relative;text-align:left;padding:0;color:var(--ink);min-height:0;
+  cursor:pointer;position:relative;text-align:left;padding:0;color:var(--ink);min-height:0;transition:transform .15s ease,filter .15s ease;
   clip-path:polygon(0 0,calc(100% - 12px) 0,100% 12px,100% 100%,12px 100%,0 calc(100% - 12px));}
-.card:hover{border-color:var(--yel);}
+.card:hover{border-color:var(--yel);transform:translateY(-2px);}
+.card:not(.poor):hover{filter:drop-shadow(0 8px 14px rgba(0,0,0,.55));}
 .card .art{height:118px;overflow:hidden;position:relative;background:#0d1015;}
 .card .art svg{width:100%;height:100%;display:block;}
 .card .art img{width:100%;height:100%;object-fit:cover;display:block;}
@@ -105,7 +107,7 @@ canvas#game{width:100%;height:auto;display:block;background:#10141a;touch-action
   z-index:50;padding:14px;backdrop-filter:blur(2px);}
 .mask.on{display:flex;}
 .modal{background:var(--panel);border:1px solid var(--line2);max-width:680px;width:100%;max-height:92vh;overflow-y:auto;
-  clip-path:polygon(0 0,calc(100% - 22px) 0,100% 22px,100% 100%,22px 100%,0 calc(100% - 22px));}
+  clip-path:polygon(0 0,calc(100% - 22px) 0,100% 22px,100% 100%,22px 100%,0 calc(100% - 22px));filter:drop-shadow(0 14px 36px rgba(0,0,0,.6));}
 .modal .mHead{display:flex;gap:14px;padding:16px 18px 10px;border-bottom:1px solid var(--line);}
 .modal .mHead .art{width:104px;height:124px;flex:none;border:1px solid var(--line2);overflow:hidden;}
 .modal .mHead .art svg{width:100%;height:100%;display:block;}
@@ -134,9 +136,9 @@ canvas#game{width:100%;height:auto;display:block;background:#10141a;touch-action
 .pzBar{display:flex;flex-wrap:wrap;gap:8px;align-items:center;margin-top:14px;}
 .pzBar .tot{font-size:14px;color:var(--dim);margin-right:auto;}
 .pzBar .tot b{color:var(--ink);font-size:17px;}
-.btn{background:var(--panel2);border:1px solid var(--line2);color:var(--ink);padding:7px 18px;font-size:14px;}
+.btn{background:linear-gradient(180deg,#1e242e,#14181f);border:1px solid var(--line2);color:var(--ink);padding:7px 18px;font-size:14px;box-shadow:0 2px 8px rgba(0,0,0,.3);}
 .btn:hover{border-color:var(--cyan);color:var(--cyan);}
-.btn.go{background:var(--yel);border-color:var(--yel);color:#141414;font-weight:800;padding:7px 26px;}
+.btn.go{background:linear-gradient(180deg,#ffe45c,#f2c81f);border-color:var(--yel);color:#141414;font-weight:800;padding:7px 26px;box-shadow:0 2px 10px rgba(247,208,56,.25);}
 .btn.go:hover{background:var(--yel2);color:#000;}
 .btn.ghost{background:transparent;}
 #pzMsg{min-height:24px;margin-top:10px;font-size:14px;line-height:1.65;}
@@ -145,14 +147,14 @@ canvas#game{width:100%;height:auto;display:block;background:#10141a;touch-action
 
 /* start / end screens */
 .screen{background:var(--panel);border:1px solid var(--line2);max-width:720px;width:100%;padding:30px 34px;text-align:left;
-  clip-path:polygon(0 0,calc(100% - 26px) 0,100% 26px,100% 100%,26px 100%,0 calc(100% - 26px));max-height:92vh;overflow-y:auto;}
+  clip-path:polygon(0 0,calc(100% - 26px) 0,100% 26px,100% 100%,26px 100%,0 calc(100% - 26px));max-height:92vh;overflow-y:auto;filter:drop-shadow(0 14px 36px rgba(0,0,0,.6));}
 .screen .kick{font-size:11px;letter-spacing:5px;color:var(--cyan);}
 .screen h1{font-size:40px;margin:8px 0 4px;letter-spacing:6px;}
 .screen h1 em{font-style:normal;color:var(--yel);}
 .screen .sub{color:var(--dim);font-size:14.5px;line-height:1.85;}
 .screen .rules{display:grid;grid-template-columns:1fr 1fr;gap:8px 18px;margin:16px 0;font-size:13.5px;color:var(--dim);line-height:1.7;}
 .screen .rules b{color:var(--ink);}
-.screen .big{display:block;width:100%;background:var(--yel);color:#131313;border:none;font-size:18px;font-weight:800;
+.screen .big{display:block;width:100%;background:linear-gradient(180deg,#ffe45c,#f2c81f);color:#131313;border:none;font-size:18px;font-weight:800;box-shadow:0 4px 16px rgba(247,208,56,.3);
   letter-spacing:4px;padding:13px;margin-top:14px;clip-path:polygon(0 0,100% 0,calc(100% - 16px) 100%,0 100%);}
 .screen .big:hover{background:var(--yel2);}
 .screen .result{font-size:17px;line-height:2;color:var(--dim);}
@@ -167,8 +169,10 @@ canvas#game{width:100%;height:auto;display:block;background:#10141a;touch-action
 .wpbar i{display:block;height:100%;width:0;background:linear-gradient(90deg,var(--cyan),var(--yel));transition:width .4s;}
 .wpText{font-size:11px;color:var(--dim);}
 .card .el.st{color:var(--yel2);}
-#skillBtn{display:none;width:100%;margin-top:8px;background:var(--yel);border:1px solid var(--yel);color:#141414;font-weight:700;font-size:14px;}
+#skillBtn{display:none;width:100%;margin-top:8px;background:linear-gradient(180deg,#ffe45c,#f2c81f);border:1px solid var(--yel);color:#141414;font-weight:700;font-size:14px;box-shadow:0 2px 10px rgba(247,208,56,.25);}
 #skillBtn:disabled{opacity:.45;cursor:not-allowed;background:var(--panel2);border-color:var(--line2);color:var(--dim);}
+#burstBtn{display:none;width:100%;margin-top:8px;background:linear-gradient(180deg,#8a63ff,#5b3df0);border:1px solid #9d8cff;color:#fff;font-weight:700;font-size:14px;box-shadow:0 2px 10px rgba(123,92,255,.35);}
+#burstBtn:disabled{opacity:.45;cursor:not-allowed;background:var(--panel2);border-color:var(--line2);color:var(--dim);box-shadow:none;}
 #upgBtn{display:none;width:100%;margin-top:8px;background:transparent;border:1px solid var(--cyan);color:var(--cyan);font-size:14px;}
 #upgBtn:disabled{opacity:.45;cursor:not-allowed;}
 .pzWrap{display:flex;gap:10px;align-items:stretch;}
@@ -182,7 +186,7 @@ canvas#game{width:100%;height:auto;display:block;background:#10141a;touch-action
 
 /* ---------- 新增：羁绊旁栏 / 卖出 / 海报 ---------- */
 .bondPanel .bondToggle{float:right;background:transparent;border:1px solid var(--line2);color:var(--dim);font-size:11px;padding:1px 8px;min-height:1.6rem;}
-.bondRow{display:flex;gap:6px;align-items:baseline;font-size:12.5px;padding:5px 8px;border:1px solid var(--line);margin-bottom:6px;color:var(--dim);}
+.bondRow{display:flex;gap:6px;align-items:baseline;font-size:12.5px;padding:5px 8px;border:1px solid var(--line);margin-bottom:6px;color:var(--dim);border-radius:6px;transition:background .2s,border-color .2s;}
 .bondRow .bondPair{font-weight:700;color:var(--ink);white-space:nowrap;}
 .bondRow .bondFx{flex:1;}
 .bondRow .bondTag{font-size:11px;white-space:nowrap;}
@@ -197,6 +201,10 @@ canvas#game{width:100%;height:auto;display:block;background:#10141a;touch-action
 #sellBtn:hover{background:rgba(247,208,56,.12);}
 .card .el.bond{color:var(--cyan);}
 .card .el.cuq{color:var(--yel2);}
+.nrgy{display:none;height:5px;background:#0d1117;border:1px solid var(--line2);margin-top:5px;border-radius:3px;overflow:hidden;}
+.nrgy i{display:block;height:100%;width:0;background:linear-gradient(90deg,#f7d038,#ffdf6b);transition:width .3s;}
+.nrgy.full i{background:linear-gradient(90deg,#ffd94d,#fff3a0);box-shadow:0 0 8px rgba(247,208,56,.8);}
+.card.burstReady{outline:2px solid var(--yel);outline-offset:-2px;}
 #posterBox img{max-width:100%;border:1px solid var(--line2);}
 
 @media (max-width:900px){
@@ -260,6 +268,7 @@ canvas#game{width:100%;height:auto;display:block;background:#10141a;touch-action
         <button id="sellBtn">卖出该干员</button>
         <button id="skillBtn">释放技能</button>
         <button id="upgBtn">升级</button>
+        <button id="burstBtn">释放元素爆发</button>
       </div>
       <div class="panel">
         <h3>敌人图鉴</h3>
@@ -518,15 +527,24 @@ function doReaction(e,el1,el2,atkDef,isSkill){
    damageEnemy(e,base*0.5*mult,null,true);
    if(atkDef){ var pl=null; S.placed.forEach(function(q){ if(q.def.key===atkDef.key) pl=q; }); if(pl){ pl.shieldAmt=(pl.shieldAmt||0)+150; pl.shieldUntil=S.time+5; } }
  }
+ if(name==="冻结"){ S.fx.push({k:"ice",x:e.x,y:e.y,t:0.6,max:0.6,color:"#bfe9ff"}); }
+ else if(name==="超载"){ pushFxCapped(mkParts(e.x,e.y,"#ff6b35",8),"parts",24); }
+ else if(name==="感电"){ S.fx.push(mkBolt(e.x,e.y)); }
+ else if(name==="扩散"){ S.fx.push({k:"swirl",x:e.x,y:e.y,t:0.5,max:0.5,color:"#52e39a"}); }
+ else if(name==="融化"){ S.fx.push({k:"boom",x:e.x,y:e.y,t:0.35,max:0.35,color:"#ffb03a"}); pushFxCapped(mkParts(e.x,e.y,"#ffb03a",8),"parts",24); }
+ else if(name==="蒸发"){ pushFxCapped(mkParts(e.x,e.y,"#ff9d5c",6),"parts",24); }
  S.fx.push({k:"react",x:e.x,y:e.y-e.r-16,txt:name+"！",t:0.9,max:0.9,color:r.color});
 }
 
 /* ---------- 成键羁绊 ---------- */
 var BONDS=[
- {id:"H2O", a:"H", b:"O", label:"H₂O", color:"#38b6ff", fx:"两者持续回血", text:"H + O → H₂O：两者持续回血！"},
- {id:"NaCl", a:"Na", b:"Cl", label:"NaCl", color:"#ffd94d", fx:"双方攻击 +15%", text:"Na + Cl → NaCl：双方攻击 +15%！"},
+ {id:"H2O", a:"H", b:"O", label:"H₂O", color:"#38b6ff", fx:"回血 · 每 10 秒触发冻结", react:"冻结", text:"H + O → H₂O：两者持续回血，每 10 秒触发冻结！"},
+ {id:"NaCl", a:"Na", b:"Cl", label:"NaCl", color:"#ffd94d", fx:"攻击 +15% · 每 10 秒触发超载", react:"超载", text:"Na + Cl → NaCl：双方攻击 +15%，每 10 秒触发超载！"},
  {id:"ZnCu", a:"Zn", b:"Cu", label:"锌铜电池", color:"#b388ff", fx:"两者攻速 +20%", text:"Zn + Cu → 锌铜原电池：两者攻速 +20%！"},
- {id:"FeO", a:"Fe", b:"O", label:"生锈", color:"#ff8c42", fx:"Fe 攻击 +25%，受伤 +20%", text:"Fe + O → 生锈：Fe 攻击 +25%，但受伤 +20%！"}
+ {id:"FeO", a:"Fe", b:"O", label:"生锈", color:"#ff8c42", fx:"Fe 攻击 +25%，受伤 +20%", text:"Fe + O → 生锈：Fe 攻击 +25%，但受伤 +20%！"},
+ {id:"HCl", a:"H", b:"Cl", label:"HCl", color:"#b388ff", fx:"每 10 秒触发感电", react:"感电", text:"H + Cl → HCl 氯化氢：每 10 秒触发感电！"},
+ {id:"CO2", a:"C", b:"O", label:"CO₂", color:"#52e39a", fx:"每 10 秒触发扩散", react:"扩散", text:"C + O → CO₂ 二氧化碳：每 10 秒触发扩散！"},
+ {id:"Na2O", a:"Na", b:"O", label:"Na₂O", color:"#ffb03a", fx:"每 10 秒触发融化", react:"融化", text:"Na + O → Na₂O 氧化钠：每 10 秒触发融化！"}
 ];
 function bondHintFor(op){
  var out=[];
@@ -553,6 +571,47 @@ function computeBonds(){
  return active;
 }
 function activeBonds(){ return S.bonds||[]; }
+
+/* ---------- 羁绊反应：成键后每 10 秒自动触发一次 ---------- */
+var BOND_REACT_CD=10, BOND_REACT_RANGE=2; /* 冷却 10 秒，作用半径 2 格 */
+function triggerBondReaction(bd){
+ var def=bd.def;
+ var el1=bd.a.def.el, el2=bd.b.def.el;
+ var ca=cellCenter(bd.a.c,bd.a.r), cb=cellCenter(bd.b.c,bd.b.r);
+ var mx=(ca.x+cb.x)/2, my=(ca.y+cb.y)/2;
+ var atkDef={atk:Math.round((effAtk(bd.a)+effAtk(bd.b))/2), key:bd.a.def.key, dmgType:"arts", el:el1, val:bd.a.def.val};
+ var inRange=[];
+ S.enemies.forEach(function(e){
+   if(!e.dead&&e.x>=0&&dist(e,{x:mx,y:my})<=CELL*BOND_REACT_RANGE) inRange.push(e);
+ });
+ if(!inRange.length) return;
+ /* 超载 / 扩散自带范围效果：只对最靠前的敌人触发一次，避免重复结算；其余反应逐个作用于范围内的敌人 */
+ var targets=inRange;
+ if(def.react==="超载"||def.react==="扩散"){
+   var best=inRange[0];
+   inRange.forEach(function(e){ if(e.prog>best.prog) best=e; });
+   targets=[best];
+ }
+ targets.forEach(function(e){ doReaction(e,el1,el2,atkDef,false); });
+ logMsg(def.label+" 羁绊触发「"+def.react+"」！命中 "+inRange.length+" 名敌人。","good");
+}
+function tickBondReactions(){
+ if(!S||!S.bonds) return;
+ if(!S.bondReactAt) S.bondReactAt={};
+ var now=S.time;
+ S.bonds.forEach(function(bd){
+   var def=bd.def;
+   if(!def.react) return;
+   var next=S.bondReactAt[def.id];
+   if(next===undefined){ S.bondReactAt[def.id]=now+BOND_REACT_CD; return; }
+   if(now>=next){ S.bondReactAt[def.id]=now+BOND_REACT_CD; triggerBondReaction(bd); }
+ });
+ Object.keys(S.bondReactAt).forEach(function(id){
+   var still=false;
+   S.bonds.forEach(function(bd){ if(bd.def.id===id) still=true; });
+   if(!still) delete S.bondReactAt[id];
+ });
+}
 function bondSignature(){
  var keys=S.placed.filter(function(p){return !p.gone;}).map(function(p){return p.def.key;}).sort().join(",");
  var bonds=(S.bonds||[]).map(function(b){return b.def.id;}).sort().join(",");
@@ -798,7 +857,8 @@ function drawBondLines(){
    ctx.fillStyle="#0b0e13"; ctx.strokeStyle=bd.def.color; ctx.lineWidth=1.5;
    ctx.beginPath(); ctx.arc(mx,my,11,0,Math.PI*2); ctx.fill(); ctx.stroke();
    ctx.fillStyle=bd.def.color; ctx.font="bold 11px sans-serif"; ctx.textAlign="center"; ctx.textBaseline="middle";
-   ctx.fillText(bd.def.label==="锌铜电池"?"⚡":bd.def.label==="生锈"?"锈":"♥",mx,my);
+   var RGLYPH={冻结:"冻",超载:"爆",感电:"⚡",扩散:"散",融化:"熔"};
+   ctx.fillText(bd.def.react?RGLYPH[bd.def.react]:(bd.def.label==="锌铜电池"?"⚡":bd.def.label==="生锈"?"锈":"♥"),mx,my);
    ctx.restore();
  });
 }
@@ -940,7 +1000,7 @@ function resetGame(autoStart){
    wave:0, waveActive:false, queue:[], spawnT:0, leaks:0,
    endless:false, daily:null, rng:null, dailyAffix:null, waveAffix:null, restUntil:0, cuRevealed:false,
    pendingEndlessPrompt:false, resultWin:false,
-   enemies:[], placed:[], fx:[], totems:[], solved:{}, armed:null, sel:null, time:0, gold:0, skillCd:{},
+   enemies:[], placed:[], fx:[], totems:[], solved:{}, armed:null, sel:null, time:0, gold:0, skillCd:{}, bondReactAt:{},
    pendingDeploy:null, coolUntil:{}, hover:null };
  document.getElementById("endMask").classList.remove("on");
  if(autoStart) document.getElementById("startMask").classList.remove("on");
@@ -1013,6 +1073,7 @@ function renderDeck(){
      +'<div class="meta"><div class="nm">'+op.name+'</div>'
      +'<div class="el"><b>'+op.sym+'</b> · '+op.z+' 号元素 · 元素 '+op.el+' · 价电子 '+op.val+'</div>'
      +'<div class="el st">DPS '+Math.round(op.atk/op.intv)+' · 射程 '+op.range+'格 · 挡 '+op.block+'</div>'
+     +'<div class="nrgy" data-nrg><i></i></div>'
      +(bondHint?'<div class="el bond">🔗 '+bondHint+'</div>':"")
      +(op.key==="Cu"?'<div class="el cuq" data-cuq>'+cuTraitText()+'</div>':"")
      +'</div>';
@@ -1035,6 +1096,9 @@ function refreshCards(){
    card.classList.toggle("poor", S.dp<op.cost);
    card.classList.toggle("armed", S.armed===op);
    var cuq=card.querySelector("[data-cuq]"); if(cuq) cuq.textContent=cuTraitText();
+   var nrg=card.querySelector("[data-nrg]");
+   var pl=null; S.placed.forEach(function(q){ if(q.def.key===op.key&&!q.gone) pl=q; });
+   if(nrg){ if(pl){ var en=pl.energy||0; nrg.style.display="block"; nrg.firstChild.style.width=en+"%"; nrg.classList.toggle("full",en>=100); card.classList.toggle("burstReady",en>=100); } else { nrg.style.display="none"; card.classList.remove("burstReady"); } }
  });
 }
 function shake(el){ el.classList.remove("shake"); void el.offsetWidth; el.classList.add("shake"); }
@@ -1044,7 +1108,7 @@ function onCard(op,card){
  if(!S.solved[op.key]){ openPuzzle(op); return; }
  if(isDeployed(op)){
    var pl=null; S.placed.forEach(function(q){ if(q.def.key===op.key) pl=q; });
-   if(pl&&!pl.summon){ castSkill(pl); return; }
+   if(pl&&!pl.summon){ if((pl.energy||0)>=100){ castBurst(pl); } else { castSkill(pl); } return; }
    shake(card); logMsg(op.name+" 已在场上，每名干员同时只能部署一次。","bad"); return;
  }
  if(coolLeft(op)>0){ shake(card); logMsg(op.name+" 还在再部署冷却中，还剩 "+coolLeft(op)+" 秒。","bad"); return; }
@@ -1315,6 +1379,7 @@ function damageEnemy(e,dmg,byOp,quiet,skill){
  e.hp-=dmg;
  if(!quiet){
    e.flash=0.12;
+   pushFxCapped(mkSpark(e.x,e.y-e.r*0.5,(byOp&&byOp.color)||"#ffd94d"),"spark",24);
    var dmgN=0; S.fx.forEach(function(f){ if(f.k==="dmg") dmgN++; });
    if(dmgN<24){
      var tag="";
@@ -1327,6 +1392,12 @@ function damageEnemy(e,dmg,byOp,quiet,skill){
  if(e.hp<=0&&!e.dead){
    e.dead=true; S.kills++; S.score+=e.score; S.gold+=e.gold||0;
    sfx("kill");
+   pushFxCapped(mkBurst(e.x,e.y,e.color),"burst",12);
+   if(byOp&&byOp.key){
+     var kp=null; S.placed.forEach(function(q){ if(q.def.key===byOp.key&&!q.gone) kp=q; });
+     if(kp){ var wasE=kp.energy||0; kp.energy=Math.min(100,wasE+20);
+       if(wasE<100&&kp.energy>=100){ logMsg(kp.def.name+" 能量已满！元素爆发就绪。","good"); refreshCards(); if(S.sel===kp) updateBurstBtn(kp); } }
+   }
    if(byOp&&(byOp.cls==="先锋")) S.dp=Math.min(DP_MAX,S.dp+1);
    if(e.affix==="split"&&e.type!=="minibug"){
      for(var i=0;i<2;i++){
@@ -1399,7 +1470,7 @@ function castSkill(p){
    S.enemies.forEach(function(e){ if(!e.dead&&dist(e,ctr)<=effRange(p)*CELL) applyElement(e,"岩",p.def,true); });
    if(bestCell){
      var sd={key:"summon",name:"海龙",sym:"龙",cls:"近卫",cost:0,color:"#38e1ff",hp:800,atk:120,intv:0.9,range:2,block:1,splash:0,dmgType:"phys",el:"水",val:1,cfg:"召唤物",tip:"芙宁娜召唤的海龙助战，持续 15 秒。"};
-     S.placed.push({def:sd,c:bestCell.c,r:bestCell.r,hp:800,cd:0.3,blocking:0,gone:false,summon:true,expireAt:S.time+15,lvl:0});
+     S.placed.push({def:sd,c:bestCell.c,r:bestCell.r,hp:800,cd:0.3,blocking:0,gone:false,summon:true,expireAt:S.time+15,lvl:0,bornAt:S.time,energy:0});
      logMsg("芙宁娜释放「万众狂欢」：海龙助战 15 秒（水元素），技能给射程内敌人挂岩！","good");
    } else { S.skillCd[p.def.key]=S.time+2; logMsg("战场已满，海龙无处可去（2 秒后可再试）。","bad"); }
  } else if(key==="Cu"){
@@ -1415,11 +1486,106 @@ function castSkill(p){
    }
    if(bestCell){
      var sd={key:"summon",name:"人偶",sym:"偶",cls:"近卫",cost:0,color:"#8e7cc3",hp:600,atk:100,intv:0.9,range:1.35,block:1,splash:0,dmgType:"phys",el:"雷",val:2,cfg:"召唤物",tip:"桑多涅召唤的人偶助战，持续 15 秒。"};
-     S.placed.push({def:sd,c:bestCell.c,r:bestCell.r,hp:600,cd:0.3,blocking:0,gone:false,summon:true,expireAt:S.time+15,lvl:0});
+     S.placed.push({def:sd,c:bestCell.c,r:bestCell.r,hp:600,cd:0.3,blocking:0,gone:false,summon:true,expireAt:S.time+15,lvl:0,bornAt:S.time,energy:0});
      logMsg("桑多涅释放「人偶军团」：人偶助战 15 秒！","good");
    } else { S.skillCd[p.def.key]=S.time+2; logMsg("战场已满，人偶无处可去（2 秒后可再试）。","bad"); }
  }
  updateHUD(); refreshCards();
+}
+/* ---------- 元素爆发（大招）：击杀充能，100 点满能量 ---------- */
+var BURSTS={
+ H:{name:"潮汐爆发",desc:"全场水伤 500 + 全队回血 40%"},
+ C:{name:"旋风爆发",desc:"聚拢周围敌人 + 风伤 300"},
+ O:{name:"冰川爆发",desc:"全场冻结 3 秒 + 冰伤 300"},
+ Na:{name:"烈焰爆发",desc:"全场火伤 700"},
+ Mg:{name:"草木爆发",desc:"全场挂草 + 持续伤害 5 秒"},
+ Cl:{name:"雷霆爆发",desc:"连锁闪电，最多 5 名敌人，每名雷伤 350"},
+ Fe:{name:"岩崩爆发",desc:"周围岩伤 500 + 全队护盾 300"},
+ Cu:{name:"雷切爆发",desc:"对最强敌人造成 1500 雷伤"},
+ Zn:{name:"人偶爆发",desc:"召唤 3 个人偶助战 15 秒"}
+};
+function summonPuppets(p,n){
+ var made=0, used=[];
+ for(var k=0;k<n;k++){
+   var bestCell=null,bestD=1e9;
+   for(var rr=0;rr<ROWS;rr++) for(var cc=0;cc<COLS;cc++){
+     if(S.placed.some(function(q){return q.c===cc&&q.r===rr;})) continue;
+     if(used.some(function(u){return u.c===cc&&u.r===rr;})) continue;
+     var onPath=!!PATH_CELLS[cc+","+rr];
+     var d2=Math.abs(cc-p.c)+Math.abs(rr-p.r)+(onPath?0:6);
+     if(d2<bestD){ bestD=d2; bestCell={c:cc,r:rr}; }
+   }
+   if(!bestCell) break;
+   used.push(bestCell);
+   var sd={key:"summon",name:"人偶",sym:"偶",cls:"近卫",cost:0,color:"#8e7cc3",hp:600,atk:100,intv:0.9,range:1.35,block:1,splash:0,dmgType:"phys",el:"雷",val:2,cfg:"召唤物",tip:"桑多涅召唤的人偶助战，持续 15 秒。"};
+   S.placed.push({def:sd,c:bestCell.c,r:bestCell.r,hp:600,cd:0.3,blocking:0,gone:false,summon:true,expireAt:S.time+15,lvl:0,bornAt:S.time,energy:0});
+   S.fx.push({k:"ring",x:(bestCell.c+0.5)*CELL,y:(bestCell.r+0.5)*CELL,t:0.35,max:0.35,color:"#8e7cc3"});
+   made++;
+ }
+ return made;
+}
+function castBurst(p){
+ if(!p||p.gone||p.summon||S.over) return;
+ var b=BURSTS[p.def.key]; if(!b) return;
+ var en=p.energy||0;
+ if(en<100){ logMsg(p.def.name+" 能量不足（"+en+"/100），击杀敌人可充能。","bad"); return; }
+ var key=p.def.key;
+ var ctr=cellCenter(p.c,p.r);
+ if(key==="Cu"){
+   var hasT=false; S.enemies.forEach(function(e){ if(!e.dead&&e.x>=0) hasT=true; });
+   if(!hasT){ logMsg("雷切爆发：场上没有敌人，能量未消耗。","bad"); return; }
+ }
+ if(key==="Zn"){
+   var free=0; for(var rr2=0;rr2<ROWS;rr2++) for(var cc2=0;cc2<COLS;cc2++){ if(!S.placed.some(function(q){return q.c===cc2&&q.r===rr2;})) free++; }
+   if(free<=0){ logMsg("人偶爆发：战场已满，能量未消耗。","bad"); return; }
+ }
+ p.energy=0;
+ S.fx.push(mkBloom(ctr.x,ctr.y,EL_COLOR[p.def.el]||p.def.color));
+ pushFxCapped(mkParts(ctr.x,ctr.y,p.def.color,10),"parts",24);
+ sfx("skill");
+ if(key==="H"){
+   S.enemies.forEach(function(e){ if(!e.dead) damageEnemy(e,500,{dmgType:"arts",el:p.def.el,key:key,val:p.def.val},false,true); });
+   S.placed.forEach(function(q){ if(!q.gone&&!q.summon){ q.hp=Math.min(q.def.hp,q.hp+q.def.hp*0.4); var qc=cellCenter(q.c,q.r); S.fx.push({k:"heal",x:qc.x,y:qc.y-30,txt:"+40%",t:0.7,max:0.7,color:"#52e39a"}); } });
+   logMsg("安娜丝塔夏释放「潮汐爆发」：全场水伤 500，全队回血 40%！","good");
+ } else if(key==="C"){
+   var pulled=0;
+   S.enemies.forEach(function(e){ if(!e.dead&&dist(e,ctr)<=3*CELL){ e.x=ctr.x+(Math.random()*36-18); e.y=ctr.y+(Math.random()*36-18); e.slowUntil=S.time+3; e.slowMul=0.5; damageEnemy(e,300,{dmgType:"arts",el:p.def.el,key:key,val:p.def.val},false,true); pulled++; } });
+   logMsg("沃雅妮莎释放「旋风爆发」：聚拢 "+pulled+" 名敌人，风伤 300！","good");
+ } else if(key==="O"){
+   S.enemies.forEach(function(e){ if(!e.dead){ e.frozenUntil=S.time+3; damageEnemy(e,300,{dmgType:"arts",el:p.def.el,key:key,val:p.def.val},false,true); } });
+   logMsg("甘雨释放「冰川爆发」：全场冻结 3 秒，冰伤 300！","good");
+ } else if(key==="Na"){
+   S.enemies.forEach(function(e){ if(!e.dead) damageEnemy(e,700,{dmgType:"arts",el:p.def.el,key:key,val:p.def.val},false,true); });
+   logMsg("申鹤释放「烈焰爆发」：全场火伤 700！","good");
+ } else if(key==="Mg"){
+   S.enemies.forEach(function(e){ if(!e.dead){ applyElement(e,"草",p.def,true); e.burnUntil=S.time+5; e.burnDps=60; } });
+   logMsg("纳西妲释放「草木爆发」：全场挂草，持续伤害 5 秒！","good");
+ } else if(key==="Cl"){
+   var list=S.enemies.filter(function(e){ return !e.dead&&e.x>=0; }).sort(function(a,b2){ return b2.prog-a.prog; }).slice(0,5);
+   var px=ctr.x, py=ctr.y;
+   list.forEach(function(e){ S.fx.push(mkChainBolt(px,py,e.x,e.y)); S.fx.push(mkBloom(e.x,e.y,EL_COLOR[p.def.el]||p.def.color)); damageEnemy(e,350,{dmgType:"arts",el:p.def.el,key:key,val:p.def.val},false,true); px=e.x; py=e.y; });
+   logMsg("哥伦比亚释放「雷霆爆发」：连锁闪电命中 "+list.length+" 名敌人！","good");
+ } else if(key==="Fe"){
+   S.enemies.forEach(function(e){ if(!e.dead&&dist(e,ctr)<=3*CELL) damageEnemy(e,500,{dmgType:"arts",el:p.def.el,key:key,val:p.def.val},false,true); });
+   S.placed.forEach(function(q){ if(!q.gone&&!q.summon){ q.shieldAmt=(q.shieldAmt||0)+300; q.shieldUntil=S.time+8; } });
+   logMsg("芙宁娜释放「岩崩爆发」：周围岩伤 500，全队获得 300 点护盾！","good");
+ } else if(key==="Cu"){
+   var best=null;
+   S.enemies.forEach(function(e){ if(!e.dead&&e.x>=0&&(!best||e.maxhp>best.maxhp)) best=e; });
+   if(best){ S.fx.push(mkChainBolt(ctr.x,ctr.y,best.x,best.y)); S.fx.push(mkBloom(best.x,best.y,EL_COLOR[p.def.el]||p.def.color)); damageEnemy(best,1500,{dmgType:"arts",el:p.def.el,key:key,val:p.def.val},false,true); logMsg("八重神子释放「雷切爆发」：对 "+best.name+" 造成 1500 点雷伤！","good"); }
+ } else if(key==="Zn"){
+   var made=summonPuppets(p,3);
+   logMsg("桑多涅释放「人偶爆发」：召唤 "+made+" 个人偶助战 15 秒！","good");
+ }
+ updateBurstBtn(p); updateHUD(); refreshCards();
+}
+function updateBurstBtn(p){
+ var b=document.getElementById("burstBtn");
+ if(!p||p.gone||p.summon||!BURSTS[p.def.key]){ b.style.display="none"; return; }
+ b.style.display="block";
+ var en=p.energy||0;
+ if(en>=100){ b.disabled=false; b.textContent="释放元素爆发「"+BURSTS[p.def.key].name+"」"; }
+ else { b.disabled=true; b.textContent="元素爆发「"+BURSTS[p.def.key].name+"」· 能量 "+en+"/100"; }
 }
 function updateSkillBtn(p){
  var b=document.getElementById("skillBtn");
@@ -1515,7 +1681,7 @@ function update(dt){
        var p=e.blockedBy;
        var d=e.dmg*(p.def.armor?(1-p.def.armor):1)*(p.bondRust?1.2:1);
        if(p.shieldUntil&&p.shieldUntil>S.time&&p.shieldAmt>0){ var ab=Math.min(p.shieldAmt,d); p.shieldAmt-=ab; d-=ab; }
-       p.hp-=d;
+       p.hp-=d; p.flash=0.12;
        S.fx.push({k:"hit",x:cellCenter(p.c,p.r).x,y:cellCenter(p.c,p.r).y,t:0.18,max:0.18,color:"#ff5a5a"});
        if(p.hp<=0&&!p.gone){
          p.gone=true;
@@ -1579,6 +1745,9 @@ function update(dt){
  S.totems=S.totems.filter(function(t){ return t.until>S.time; });
  /* 羁绊回血（H₂O：两者每秒回 3% 生命） */
  S.placed.forEach(function(p){ if(!p.gone&&p.bondRegen&&p.hp<p.def.hp){ p.hp=Math.min(p.def.hp,p.hp+p.def.hp*0.03*dt); } });
+ /* 羁绊反应（成键后每 10 秒触发一次） */
+ tickBondReactions();
+ S.placed.forEach(function(p){ if(p.flash>0) p.flash-=dt; }); /* 干员受击闪白计时 */
  /* 召唤物到期 */
  S.placed.forEach(function(p){ if(p.summon&&p.expireAt&&p.expireAt<=S.time&&!p.gone){ p.gone=true; logMsg(p.def.name+" 消散了。",""); if(S.sel===p) clearSel(); } });
  /* 清理 */
@@ -1628,6 +1797,47 @@ function gameOver(win){
 }
 
 /* ================= 渲染 ================= */
+/* ---------- 视觉特效 helpers（粒子数量有上限，手机不卡） ---------- */
+function mkSpark(x,y,color){
+ var pts=[]; for(var i=0;i<6;i++){ var a=Math.random()*Math.PI*2, d=6+Math.random()*16; pts.push({dx:Math.cos(a)*d,dy:Math.sin(a)*d}); }
+ return {k:"spark",x:x,y:y,color:color,pts:pts,t:0.25,max:0.25};
+}
+function mkBurst(x,y,color){
+ var pts=[]; for(var i=0;i<10;i++){ var a=Math.random()*Math.PI*2, d=8+Math.random()*22; pts.push({dx:Math.cos(a)*d,dy:Math.sin(a)*d}); }
+ return {k:"burst",x:x,y:y,color:color,pts:pts,t:0.4,max:0.4};
+}
+function mkParts(x,y,color,n){
+ var pts=[]; for(var i=0;i<n;i++){ var a=Math.random()*Math.PI*2, d=5+Math.random()*20; pts.push({dx:Math.cos(a)*d,dy:Math.sin(a)*d}); }
+ return {k:"parts",x:x,y:y,color:color,pts:pts,t:0.35,max:0.35};
+}
+function mkBolt(x,y){
+ var pts=[{x:-16,y:-14}];
+ for(var i=1;i<5;i++){ pts.push({x:-16+i*8+(Math.random()*10-5), y:-14+i*7+(Math.random()*8-4)}); }
+ pts.push({x:16,y:14});
+ return {k:"bolt",x:x,y:y,color:"#cfe8ff",pts:pts,t:0.25,max:0.25};
+}
+function pushFxCapped(f,kind,cap){ if(!f) return; var arr=Array.isArray(f)?f:[f]; var n=0; S.fx.forEach(function(q){ if(q.k===kind) n++; }); arr.forEach(function(it){ if(n<cap){ S.fx.push(it); n++; } }); }
+function floatText(f,txt,y,font){ ctx.font=font; ctx.textAlign="center"; ctx.lineWidth=3; ctx.strokeStyle="rgba(0,0,0,0.8)"; ctx.strokeText(txt,f.x,y); ctx.fillStyle=f.color; ctx.fillText(txt,f.x,y); ctx.textAlign="left"; }
+var shadowSprite=null;
+function getShadowSprite(){
+ if(shadowSprite) return shadowSprite;
+ var c=document.createElement("canvas"); c.width=64; c.height=32;
+ var g=c.getContext("2d");
+ var gr=g.createRadialGradient(32,16,2,32,16,30);
+ gr.addColorStop(0,"rgba(0,0,0,0.42)"); gr.addColorStop(1,"rgba(0,0,0,0)");
+ g.fillStyle=gr;
+ g.save(); g.translate(32,16); g.scale(1,0.5); g.beginPath(); g.arc(0,0,30,0,Math.PI*2); g.fill(); g.restore();
+ shadowSprite=c; return c;
+}
+function drawShadow(x,y,w){ var s=getShadowSprite(); ctx.drawImage(s,x-w/2,y-w*0.28,w,w*0.56); }
+function mkBloom(x,y,color){
+ return {k:"bloom",x:x,y:y,color:color,t:0.8,max:0.8};
+}
+function mkChainBolt(x1,y1,x2,y2){
+ var pts=[];
+ for(var i=0;i<=5;i++){ var t=i/5; pts.push({x:x1+(x2-x1)*t+(i>0&&i<5?(Math.random()*14-7):0), y:y1+(y2-y1)*t+(i>0&&i<5?(Math.random()*14-7):0)}); }
+ return {k:"bolt",x:0,y:0,color:"#cfe8ff",pts:pts,t:0.3,max:0.3};
+}
 function draw(){
  ctx.clearRect(0,0,VW,VH);
  var c,r;
@@ -1636,7 +1846,9 @@ function draw(){
    ctx.fillStyle=isPath? "#2b2718" : ((c+r)%2? "#151a21" : "#171d25");
    ctx.fillRect(c*CELL+1,r*CELL+1,CELL-2,CELL-2);
    if(isPath){
-     ctx.strokeStyle="rgba(247,208,56,.3)"; ctx.lineWidth=1;
+     ctx.strokeStyle="rgba(247,208,56,.07)"; ctx.lineWidth=5;
+     ctx.strokeRect(c*CELL+5.5,r*CELL+5.5,CELL-11,CELL-11);
+     ctx.strokeStyle="rgba(247,208,56,.45)"; ctx.lineWidth=1;
      ctx.strokeRect(c*CELL+5.5,r*CELL+5.5,CELL-11,CELL-11);
    }
  }
@@ -1644,6 +1856,10 @@ function draw(){
  ctx.strokeStyle="rgba(255,255,255,.045)"; ctx.lineWidth=1;
  for(var gx=0;gx<=COLS;gx++){ ctx.beginPath(); ctx.moveTo(gx*CELL+.5,0); ctx.lineTo(gx*CELL+.5,VH); ctx.stroke(); }
  for(var gy=0;gy<=ROWS;gy++){ ctx.beginPath(); ctx.moveTo(0,gy*CELL+.5); ctx.lineTo(VW,gy*CELL+.5); ctx.stroke(); }
+ /* 暗角：四周微微压暗，突出战场中心 */
+ var vg=ctx.createRadialGradient(VW/2,VH/2,VH*0.35,VW/2,VH/2,VW*0.62);
+ vg.addColorStop(0,"rgba(0,0,0,0)"); vg.addColorStop(1,"rgba(0,0,0,0.28)");
+ ctx.fillStyle=vg; ctx.fillRect(0,0,VW,VH);
  /* 出生点与基地 */
  ctx.fillStyle="#ff5a5a"; ctx.fillRect(2,1*CELL+10,5,CELL-20);
  ctx.fillStyle="#38e1ff"; ctx.fillRect(COLS*CELL-7,5*CELL+10,5,CELL-20);
@@ -1651,6 +1867,14 @@ function draw(){
  ctx.fillText("出生点",8,1*CELL+CELL-6);
  ctx.textAlign="right"; ctx.fillText("基地",COLS*CELL-10,5*CELL+CELL-6); ctx.textAlign="left";
  var pulse=0.6+0.4*Math.sin(S.time*3);
+ var halo=function(x,y,col){
+   var hg=ctx.createRadialGradient(x,y,2,x,y,26);
+   hg.addColorStop(0,col); hg.addColorStop(1,"rgba(0,0,0,0)");
+   ctx.globalAlpha=0.35+0.25*pulse; ctx.fillStyle=hg;
+   ctx.beginPath(); ctx.arc(x,y,26,0,Math.PI*2); ctx.fill(); ctx.globalAlpha=1;
+ };
+ halo(6,1*CELL+CELL/2,"rgba(255,90,90,0.55)");
+ halo(COLS*CELL-6,5*CELL+CELL/2,"rgba(56,225,255,0.55)");
  ctx.globalAlpha=pulse;
  ctx.fillStyle="#ff5a5a"; ctx.beginPath(); ctx.arc(6,1*CELL+CELL/2,7,0,Math.PI*2); ctx.fill();
  ctx.fillStyle="#38e1ff"; ctx.beginPath(); ctx.arc(COLS*CELL-6,5*CELL+CELL/2,7,0,Math.PI*2); ctx.fill();
@@ -1674,31 +1898,52 @@ function draw(){
      ctx.strokeStyle="rgba(56,225,255,.8)"; ctx.setLineDash([6,5]); ctx.stroke(); ctx.setLineDash([]);
      ctx.strokeStyle="rgba(247,208,56,.9)"; ctx.lineWidth=2;
      ctx.strokeRect(S.hover.c*CELL+2.5,S.hover.r*CELL+2.5,CELL-5,CELL-5);
+     var ha=0.10+0.06*Math.sin(S.time*4);
+     ctx.fillStyle="rgba(247,208,56,"+ha.toFixed(3)+")";
+     ctx.fillRect(S.hover.c*CELL+2.5,S.hover.r*CELL+2.5,CELL-5,CELL-5);
    }
  }
  drawBondLines();
  /* 干员 */
  S.placed.forEach(function(p){
    var ctr=cellCenter(p.c,p.r);
-   ctx.beginPath(); ctx.arc(ctr.x,ctr.y,24,0,Math.PI*2);
+   drawShadow(ctr.x,ctr.y+16,52);
+   var pop=1;
+   if(p.bornAt!=null){ var pt=Math.min(1,(S.time-p.bornAt)/0.25); pop=0.6+0.4*(1-Math.pow(1-pt,3)); }
+   var shx=0,shy=0;
+   if(p.flash>0){ shx=Math.random()*3-1.5; shy=Math.random()*3-1.5; }
+   ctx.save();
+   ctx.translate(ctr.x+shx,ctr.y+shy);
+   ctx.scale(pop,pop);
+   ctx.beginPath(); ctx.arc(0,0,24,0,Math.PI*2);
    ctx.fillStyle="#10141b"; ctx.fill();
    ctx.lineWidth=3; ctx.strokeStyle=p.def.color; ctx.stroke();
    ctx.fillStyle=p.def.color; ctx.font="800 17px monospace"; ctx.textAlign="center";
-   ctx.fillText(p.def.sym,ctr.x,ctr.y+2);
+   ctx.fillText(p.def.sym,0,2);
    ctx.fillStyle="#e8ecf1"; ctx.font="10px sans-serif";
-   ctx.fillText(p.def.name,ctr.x,ctr.y+15);
+   ctx.fillText(p.def.name,0,15);
+   if(p.flash>0){ ctx.globalAlpha=0.55; ctx.fillStyle="#fff"; ctx.beginPath(); ctx.arc(0,0,24,0,Math.PI*2); ctx.fill(); ctx.globalAlpha=1; }
    /* 血条 */
    var w=44, pct=Math.max(0,p.hp/p.def.hp);
-   ctx.fillStyle="#000"; ctx.fillRect(ctr.x-w/2,ctr.y-32,w,5);
-   ctx.fillStyle=pct>0.35?"#52e39a":"#ff5a5a"; ctx.fillRect(ctr.x-w/2,ctr.y-32,w*pct,5);
-   if(p.lvl>0){ ctx.fillStyle="#f7d038"; ctx.font="bold 11px sans-serif"; ctx.textAlign="center"; ctx.fillText("★".repeat(p.lvl),ctr.x,ctr.y+28); }
-   if(S.sel===p){ ctx.lineWidth=2; ctx.strokeStyle="#38e1ff"; ctx.beginPath(); ctx.arc(ctr.x,ctr.y,28,0,Math.PI*2); ctx.stroke(); }
-   if(p.def.skill&&skillReady(p)){ ctx.lineWidth=2; ctx.strokeStyle="rgba(247,208,56,.9)"; ctx.beginPath(); ctx.arc(ctr.x,ctr.y,31,0,Math.PI*2); ctx.stroke(); }
+   ctx.fillStyle="#000"; ctx.fillRect(-w/2,-32,w,5);
+   var hg=ctx.createLinearGradient(-w/2,0,w/2,0);
+   if(pct>0.35){ hg.addColorStop(0,"#2fae6b"); hg.addColorStop(1,"#7dedb0"); }
+   else { hg.addColorStop(0,"#d63c3c"); hg.addColorStop(1,"#ff8a5c"); }
+   ctx.fillStyle=hg; ctx.fillRect(-w/2,-32,w*pct,5);
+   if(p.lvl>0){ ctx.fillStyle="#f7d038"; ctx.font="bold 11px sans-serif"; ctx.textAlign="center"; ctx.fillText("★".repeat(p.lvl),0,28); }
+   if(S.sel===p){ ctx.lineWidth=2; ctx.strokeStyle="#38e1ff"; ctx.beginPath(); ctx.arc(0,0,28,0,Math.PI*2); ctx.stroke(); }
+   if(p.def.skill&&skillReady(p)){ ctx.lineWidth=2; ctx.strokeStyle="rgba(247,208,56,.9)"; ctx.beginPath(); ctx.arc(0,0,31,0,Math.PI*2); ctx.stroke(); }
+   var en=p.energy||0;
+   if(en>0){ var ea=en>=100?(0.7+0.3*Math.sin(S.time*6)):0.9; ctx.globalAlpha=ea; ctx.lineWidth=en>=100?4:2.5; ctx.strokeStyle=en>=100?"#ffd94d":"rgba(255,217,77,0.75)"; ctx.beginPath(); ctx.arc(0,0,34,-Math.PI/2,-Math.PI/2+Math.PI*2*(en/100)); ctx.stroke(); ctx.globalAlpha=1; }
+   ctx.restore();
    ctx.textAlign="left";
  });
  /* 敌人 */
  S.enemies.forEach(function(e){
-   ctx.save(); ctx.translate(e.x,e.y);
+   if(e.type!=="bat") drawShadow(e.x,e.y+e.r+3,e.r*2.4);
+   var shx=0,shy=0;
+   if(e.flash>0){ shx=Math.random()*3-1.5; shy=Math.random()*3-1.5; }
+   ctx.save(); ctx.translate(e.x+shx,e.y+shy);
    if(e.type==="bug"){
      ctx.strokeStyle="#7a4a21"; ctx.lineWidth=2;
      for(var i=-1;i<=1;i++){ ctx.beginPath(); ctx.moveTo(-8,i*6); ctx.lineTo(-14,i*8); ctx.moveTo(8,i*6); ctx.lineTo(14,i*8); ctx.stroke(); }
@@ -1732,7 +1977,9 @@ function draw(){
    ctx.restore();
    var w2=36, pct2=Math.max(0,e.hp/e.maxhp);
    ctx.fillStyle="#000"; ctx.fillRect(e.x-w2/2,e.y-e.r-11,w2,4.5);
-   ctx.fillStyle="#ff5a5a"; ctx.fillRect(e.x-w2/2,e.y-e.r-11,w2*pct2,4.5);
+   var hg2=ctx.createLinearGradient(e.x-w2/2,0,e.x+w2/2,0);
+   hg2.addColorStop(0,"#d63c3c"); hg2.addColorStop(1,"#ff8a5c");
+   ctx.fillStyle=hg2; ctx.fillRect(e.x-w2/2,e.y-e.r-11,w2*pct2,4.5);
    if(e.aura&&e.aura.until>S.time){
      ctx.fillStyle=EL_COLOR[e.aura.el]||"#fff"; ctx.globalAlpha=0.45;
      ctx.beginPath(); ctx.arc(e.x,e.y,e.r+3,0,Math.PI*2); ctx.fill(); ctx.globalAlpha=1;
@@ -1767,10 +2014,23 @@ function draw(){
      ctx.beginPath(); ctx.arc(f.x,f.y,(1-a)*34+6,0,Math.PI*2); ctx.stroke(); ctx.globalAlpha=1; }
    if(f.k==="hit"){ ctx.strokeStyle=f.color; ctx.globalAlpha=a; ctx.lineWidth=2.5;
      ctx.beginPath(); ctx.moveTo(f.x-12,f.y-12); ctx.lineTo(f.x+12,f.y+12); ctx.moveTo(f.x+12,f.y-12); ctx.lineTo(f.x-12,f.y+12); ctx.stroke(); ctx.globalAlpha=1; }
-   if(f.k==="dmg"){ ctx.fillStyle=f.color; ctx.globalAlpha=a; ctx.font="bold 12px monospace"; ctx.textAlign="center"; ctx.fillText(f.txt,f.x,f.y-(1-a)*22); ctx.textAlign="left"; ctx.globalAlpha=1; }
-   if(f.k==="heal"){ ctx.fillStyle=f.color; ctx.globalAlpha=a; ctx.font="bold 13px sans-serif"; ctx.textAlign="center"; ctx.fillText(f.txt||"+",f.x,f.y-(1-a)*18); ctx.textAlign="left"; ctx.globalAlpha=1; }
-   if(f.k==="react"){ ctx.fillStyle=f.color; ctx.globalAlpha=a; ctx.font="bold 15px sans-serif"; ctx.textAlign="center"; ctx.fillText(f.txt,f.x,f.y-(1-a)*26); ctx.textAlign="left"; ctx.globalAlpha=1; }
+   if(f.k==="dmg"){ ctx.globalAlpha=a; floatText(f,f.txt,f.y-(1-a)*22,"bold 12px monospace"); ctx.globalAlpha=1; }
+   if(f.k==="heal"){ ctx.globalAlpha=a; floatText(f,f.txt||"+",f.y-(1-a)*18,"bold 13px sans-serif"); ctx.globalAlpha=1; }
+   if(f.k==="react"){ ctx.globalAlpha=a; floatText(f,f.txt,f.y-(1-a)*26,"bold 15px sans-serif"); ctx.globalAlpha=1; }
    if(f.k==="skill"){ ctx.strokeStyle=f.color; ctx.globalAlpha=a; ctx.lineWidth=3; ctx.beginPath(); ctx.arc(f.x,f.y,(1-a)*70+10,0,Math.PI*2); ctx.stroke(); ctx.globalAlpha=1; }
+   if(f.k==="spark"){ f.pts.forEach(function(pt){ var pr=1-f.t/f.max; ctx.fillStyle=f.color; ctx.globalAlpha=a; ctx.beginPath(); ctx.arc(f.x+pt.dx*pr,f.y+pt.dy*pr,2,0,Math.PI*2); ctx.fill(); }); ctx.globalAlpha=1; }
+   if(f.k==="burst"){ ctx.strokeStyle=f.color; ctx.globalAlpha=a; ctx.lineWidth=2.5; ctx.beginPath(); ctx.arc(f.x,f.y,(1-a)*30+8,0,Math.PI*2); ctx.stroke(); f.pts.forEach(function(pt){ var pr=1-a; ctx.fillStyle=f.color; ctx.beginPath(); ctx.arc(f.x+pt.dx*pr,f.y+pt.dy*pr,2.5,0,Math.PI*2); ctx.fill(); }); ctx.globalAlpha=1; }
+   if(f.k==="ring"){ ctx.strokeStyle=f.color; ctx.globalAlpha=a; ctx.lineWidth=3; ctx.beginPath(); ctx.arc(f.x,f.y,(1-a)*46+8,0,Math.PI*2); ctx.stroke(); ctx.globalAlpha=1; }
+   if(f.k==="parts"){ f.pts.forEach(function(pt){ var pr=1-f.t/f.max; ctx.fillStyle=f.color; ctx.globalAlpha=a; ctx.beginPath(); ctx.arc(f.x+pt.dx*pr,f.y+pt.dy*pr,2.2,0,Math.PI*2); ctx.fill(); }); ctx.globalAlpha=1; }
+   if(f.k==="ice"){ ctx.strokeStyle=f.color; ctx.globalAlpha=a; ctx.lineWidth=2; var ir=6+(1-a)*16; for(var ii=0;ii<3;ii++){ var an=ii*Math.PI/3; ctx.beginPath(); ctx.moveTo(f.x-Math.cos(an)*ir,f.y-Math.sin(an)*ir); ctx.lineTo(f.x+Math.cos(an)*ir,f.y+Math.sin(an)*ir); ctx.stroke(); } ctx.beginPath(); ctx.arc(f.x,f.y,ir*0.45,0,Math.PI*2); ctx.stroke(); ctx.globalAlpha=1; }
+   if(f.k==="bolt"){ ctx.strokeStyle=f.color; ctx.globalAlpha=a; ctx.lineWidth=2; ctx.beginPath(); f.pts.forEach(function(pt,pi){ if(pi===0) ctx.moveTo(f.x+pt.x,f.y+pt.y); else ctx.lineTo(f.x+pt.x,f.y+pt.y); }); ctx.stroke(); ctx.globalAlpha=1; }
+   if(f.k==="swirl"){ ctx.strokeStyle=f.color; ctx.globalAlpha=a; ctx.lineWidth=2.5; var sa=(1-a)*Math.PI*1.5; for(var si=0;si<3;si++){ ctx.beginPath(); ctx.arc(f.x,f.y,8+si*7,sa+si*2.1,sa+si*2.1+Math.PI*0.9); ctx.stroke(); } ctx.globalAlpha=1; }
+   if(f.k==="bloom"){ var bp=1-f.t/f.max; var br=12+bp*42; ctx.globalAlpha=a; ctx.strokeStyle=f.color; ctx.lineWidth=2.5;
+     for(var bi=0;bi<8;bi++){ var ba=bi*Math.PI/4+bp*0.5; var px2=f.x+Math.cos(ba)*br*0.62, py2=f.y+Math.sin(ba)*br*0.62;
+       ctx.save(); ctx.translate(px2,py2); ctx.rotate(ba); ctx.fillStyle=f.color; ctx.beginPath(); ctx.ellipse(0,0,br*0.42,br*0.22,0,0,Math.PI*2); ctx.fill(); ctx.restore(); }
+     ctx.fillStyle="#fff"; ctx.beginPath(); ctx.arc(f.x,f.y,4+bp*6,0,Math.PI*2); ctx.fill();
+     ctx.strokeStyle=f.color; ctx.beginPath(); ctx.arc(f.x,f.y,br,0,Math.PI*2); ctx.stroke();
+     ctx.globalAlpha=a*0.5; ctx.beginPath(); ctx.arc(f.x,f.y,br*0.55,0,Math.PI*2); ctx.stroke(); ctx.globalAlpha=1; }
  });
  ctx.textAlign="left";
 }
@@ -1813,7 +2073,8 @@ cv.addEventListener("click",function(ev){
    if(!canPlace(c,r,op)){ logMsg(isMelee(op)?"近战干员只能部署在路线格上（这个格子不在路线上或已被占用）。":"远程干员只能部署在路线外的空格上。","bad"); return; }
    if(S.dp<op.cost){ logMsg("部署费用不足，等费用够了自动进入部署。","bad"); S.armed=null; S.pendingDeploy=op.key; showPendingHint(op); refreshCards(); return; }
    S.dp-=op.cost;
-   S.placed.push({def:op,c:c,r:r,hp:op.hp,cd:0.3,blocking:0,gone:false,lvl:0,invested:op.cost,upgGold:0,wavePlaced:S.wave,fired:false});
+   S.placed.push({def:op,c:c,r:r,hp:op.hp,cd:0.3,blocking:0,gone:false,lvl:0,invested:op.cost,upgGold:0,wavePlaced:S.wave,fired:false,bornAt:S.time,energy:0});
+   S.fx.push({k:"ring",x:(c+0.5)*CELL,y:(r+0.5)*CELL,t:0.35,max:0.35,color:op.color});
    sfx("deploy");
    logMsg(op.name+" 已部署（"+op.sym+" "+op.cfg+"）。","good");
    S.armed=null; hidePlaceHint();
@@ -1846,7 +2107,7 @@ function selectOp(p){
    +"<br>"+d.tip;
  if(p.summon){ document.getElementById("retreatBtn").style.display="none"; document.getElementById("sellBtn").style.display="none"; }
  else { document.getElementById("retreatBtn").style.display="block"; document.getElementById("sellBtn").style.display="block"; }
- updateSkillBtn(p); updateUpgBtn(p); updateSellBtn(p);
+ updateSkillBtn(p); updateUpgBtn(p); updateSellBtn(p); updateBurstBtn(p);
 }
 function clearSel(){
  S.sel=null;
@@ -1855,6 +2116,7 @@ function clearSel(){
  document.getElementById("sellBtn").style.display="none";
  document.getElementById("skillBtn").style.display="none";
  document.getElementById("upgBtn").style.display="none";
+ document.getElementById("burstBtn").style.display="none";
 }
 document.getElementById("retreatBtn").addEventListener("click",function(){
  if(!S.sel) return;
@@ -1885,6 +2147,7 @@ document.getElementById("sellBtn").addEventListener("click",function(){
 document.getElementById("waveBtn").addEventListener("click",startWave);
 document.getElementById("muteBtn").addEventListener("click",function(){ MUTED=!MUTED; this.textContent=MUTED?"🔇 静音":"🔊 音效"; });
 document.getElementById("skillBtn").addEventListener("click",function(){ if(S.sel) castSkill(S.sel); });
+document.getElementById("burstBtn").addEventListener("click",function(){ if(S.sel) castBurst(S.sel); });
 document.getElementById("upgBtn").addEventListener("click",upgradeOp);
 document.getElementById("ionNext").addEventListener("click",function(){
  S.ionOpen=false;
