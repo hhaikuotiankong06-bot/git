@@ -179,6 +179,26 @@ canvas#game{width:100%;height:auto;display:block;background:#10141a;touch-action
 #ionOpts .btn{text-align:left;padding:10px 14px;width:100%;}
 #ionOpts .btn:disabled{opacity:.55;cursor:default;}
 
+
+/* ---------- 新增：羁绊旁栏 / 卖出 / 海报 ---------- */
+.bondPanel .bondToggle{float:right;background:transparent;border:1px solid var(--line2);color:var(--dim);font-size:11px;padding:1px 8px;min-height:1.6rem;}
+.bondRow{display:flex;gap:6px;align-items:baseline;font-size:12.5px;padding:5px 8px;border:1px solid var(--line);margin-bottom:6px;color:var(--dim);}
+.bondRow .bondPair{font-weight:700;color:var(--ink);white-space:nowrap;}
+.bondRow .bondFx{flex:1;}
+.bondRow .bondTag{font-size:11px;white-space:nowrap;}
+.bondRow.on{border-color:var(--grn);background:rgba(82,227,154,.08);color:var(--ink);}
+.bondRow.on .bondTag{color:var(--grn);font-weight:700;}
+.bondRow.near{border-color:var(--yel);background:rgba(247,208,56,.06);}
+.bondRow.near .bondTag{color:var(--yel);}
+.bondRow.off{opacity:.55;}
+.bondPanel.collapsed #bondList{display:none;}
+#bondFab{display:none;position:fixed;right:14px;bottom:14px;z-index:40;background:var(--yel);color:#141414;border:none;font-weight:700;padding:10px 16px;border-radius:999px;box-shadow:0 4px 16px rgba(0,0,0,.5);}
+#sellBtn{display:none;width:100%;margin-top:8px;background:transparent;border:1px solid var(--yel);color:var(--yel2);font-size:14px;}
+#sellBtn:hover{background:rgba(247,208,56,.12);}
+.card .el.bond{color:var(--cyan);}
+.card .el.cuq{color:var(--yel2);}
+#posterBox img{max-width:100%;border:1px solid var(--line2);}
+
 @media (max-width:900px){
   .main{flex-direction:column;}
   .side{width:100%;flex-direction:row;flex-wrap:wrap;}
@@ -195,6 +215,10 @@ canvas#game{width:100%;height:auto;display:block;background:#10141a;touch-action
   .stat b{font-size:17px;}
   .waveprog{min-width:160px;}
   .screen{padding:20px;}
+  #bondFab{display:block;}
+  .bondPanel{display:none;}
+  .bondPanel.open{display:block;position:fixed;left:12px;right:12px;bottom:70px;z-index:45;box-shadow:0 8px 30px rgba(0,0,0,.6);}
+
   .screen h1{font-size:26px;}
   .modal .mHead .art{width:84px;height:100px;}
 }
@@ -221,6 +245,7 @@ canvas#game{width:100%;height:auto;display:block;background:#10141a;touch-action
     <button class="hbtn" id="restartBtn">重开</button>
     <button class="hbtn" id="muteBtn">🔊 音效</button>
   </div>
+  <button id="bondFab">🔗 羁绊</button>
 
   <div class="main">
     <div class="stageWrap">
@@ -232,6 +257,7 @@ canvas#game{width:100%;height:auto;display:block;background:#10141a;touch-action
         <h3>干员情报</h3>
         <div id="selInfo">点击战场上已部署的干员，查看攻击范围与状态；点击下方干员卡进行排布与部署。</div>
         <button id="retreatBtn">撤退该干员（返还一半费用）</button>
+        <button id="sellBtn">卖出该干员</button>
         <button id="skillBtn">释放技能</button>
         <button id="upgBtn">升级</button>
       </div>
@@ -245,7 +271,13 @@ canvas#game{width:100%;height:auto;display:block;background:#10141a;touch-action
           <div><i style="background:#8d9bb0"></i>重装暴徒 —— 慢速，血量极高，物防高（法术克制）</div>
           <div><i style="background:#9b59b6"></i>整合首领 —— Boss，血极厚，漏扣 5 点（困难版第 6 波还有整合巨像，漏扣 8 点）</div>
           <div><i style="background:#ff9ecb"></i>法术伤害无视物防（术师的攻击都是法术）</div>
+          <div><i style="background:#38e1ff"></i>价电子克制：干员价电子 + 敌人缺口 = 8 时伤害 ×2，相等时 ×0.5（敌人头顶有“缺 Xe⁻”）</div>
+          <div><i style="background:#f7d038"></i>元素反应：两种不同元素命中同一敌人会触发冻结 / 超导 / 蒸发等反应</div>
         </div>
+      </div>
+      <div class="panel bondPanel" id="bondPanel">
+        <h3>成键羁绊 <button class="bondToggle" id="bondToggle">收起</button></h3>
+        <div id="bondList"></div>
       </div>
       <div class="panel">
         <h3>作战记录</h3>
@@ -310,10 +342,14 @@ canvas#game{width:100%;height:auto;display:block;background:#10141a;touch-action
       <div><b>部署费用</b>：随时间自动回复，先锋击杀敌人回 1 点费用。</div>
       <div><b>胜利条件</b>：守住全部 6 波进攻。</div>
       <div><b>排布解题</b>：点干员卡打开排布面板，填对才能部署；解过的干员之后可直接部署。</div>
+      <div><b>每日挑战</b>：每天全服同一套波次（困难 6 波），结算可复制战绩比拼；<b>无尽模式</b>：守住全部波次后可继续，敌人越来越强。</div>
       <div><b>阻挡</b>：先锋 / 重装 / 近卫部署在<b>路线格</b>上拦住敌人，被拦的敌人会转而攻击干员；狙击 / 术师部署在路线外。</div>
     </div>
     <p class="sub" id="bestLine" style="text-align:center"></p>
     <button class="big" id="startBtn">开始行动</button>
+    <button class="big" id="dailyBtn" style="background:var(--cyan);color:#08222b;">⚗️ 每日挑战</button>
+    <button class="big" id="endlessBtn" style="background:var(--panel2);color:var(--yel);border:1px solid var(--yel);">∞ 无尽模式</button>
+    <p class="sub" id="dailyLine" style="text-align:center"></p>
   </div>
 </div>
 
@@ -324,6 +360,31 @@ canvas#game{width:100%;height:auto;display:block;background:#10141a;touch-action
     <h1 id="endTitle">行动结束</h1>
     <div class="result" id="endStats"></div>
     <button class="big" id="againBtn">再次行动</button>
+    <button class="big" id="copyBtn" style="display:none;background:var(--cyan);color:#08222b;">📋 复制战绩</button>
+    <button class="big" id="posterBtn" style="display:none;background:var(--panel2);color:var(--yel);border:1px solid var(--yel);">🖼️ 生成战绩图</button>
+    <div id="posterBox" style="display:none;margin-top:12px;text-align:center"><img id="posterImg" alt="战绩海报"><div style="font-size:12px;color:var(--dim);margin-top:6px">长按图片保存 / 发送给好友</div></div>
+  </div>
+</div>
+
+<!-- Endless prompt -->
+<div class="mask" id="endlessMask">
+  <div class="modal" style="max-width:480px">
+    <div class="mBody" style="text-align:center">
+      <h2 style="margin:6px 0">🎉 全部波次守住了！</h2>
+      <p class="q">要不要继续挑战无尽模式？第 7 波起敌人越来越强，每 5 波一只弱化巨像。</p>
+      <button class="btn go" id="endlessGo" style="margin-right:8px">继续无尽</button>
+      <button class="btn" id="endlessStop">结束行动（结算）</button>
+    </div>
+  </div>
+</div>
+
+<!-- Detail modal (long-press) -->
+<div class="mask" id="detailMask">
+  <div class="modal" style="max-width:480px">
+    <div class="mBody">
+      <div id="detailBody"></div>
+      <button class="btn go" id="detailClose" style="width:100%;margin-top:10px">关闭</button>
+    </div>
   </div>
 </div>
 
@@ -340,66 +401,420 @@ var OPS=[
   hair:"#e2483d", hairStyle:"twin", acc:"none", eye:"#8a2be2", coat:"#3a3f4a",
   target:[1,0,0,0,0,0,0], cfg:"1s¹",
   tip:"能量最低原理：电子优先占据能量最低的 1s 轨道。",
-  hp:760, atk:70, intv:0.55, range:1.15, block:1, splash:0, dmgType:"phys",
+  hp:760, atk:70, intv:0.55, range:1.15, block:1, splash:0, dmgType:"phys", el:"水", val:1,
   desc:"费用低、攻速快，负责前期回费与拦截。",
   skill:{name:"冰封敕令",cd:25,desc:"冰封全场：5 秒内所有敌人移速 -50%。"}},
  {key:"C", sym:"C", z:6, name:"沃雅妮莎", cls:"狙击", cost:8, color:"#ffb03a",
   hair:"#ff8c42", hairStyle:"long", acc:"halo", eye:"#d43d2a", coat:"#f0f0f2",
   target:[2,2,2,0,0,0,0], cfg:"1s²2s²2p²",
   tip:"洪特规则：2p 的 2 个电子分占两个不同轨道、自旋平行，能量最低。",
-  hp:560, atk:105, intv:0.34, range:2.6, block:0, splash:0, dmgType:"phys",
+  hp:560, atk:105, intv:0.34, range:2.6, block:0, splash:0, dmgType:"phys", el:"风", val:4,
   desc:"远程单体，攻速极高，点杀快速单位。",
   skill:{name:"潮汐咏叹",cd:25,desc:"治疗生命最低的干员 40%，并使其攻击 +20% 持续 8 秒。"}},
  {key:"O", sym:"O", z:8, name:"甘雨", cls:"术师", cost:10, color:"#ff9ecb",
   hair:"#c98a5e", hairStyle:"long", acc:"sheep", eye:"#7a4fd0", coat:"#5b4a68",
   target:[2,2,4,0,0,0,0], cfg:"1s²2s²2p⁴",
   tip:"洪特规则：2p 的 4 个电子先分占 3 个轨道、再配对其中 1 个，所以 2p⁴ 里只有一个轨道是配对的（同一轨道 2 个电子自旋相反，那才是泡利原理）。",
-  hp:620, atk:265, intv:1.15, range:2.4, block:0, splash:0, dmgType:"arts",
+  hp:620, atk:265, intv:1.15, range:2.4, block:0, splash:0, dmgType:"arts", el:"冰", val:6,
   desc:"远程法术单体，高伤害，熔穿重甲。",
   skill:{name:"霜华矢",cd:30,desc:"向射程内最远的敌人射出霜华矢，造成 500% 攻击的范围冰伤。"}},
  {key:"Na", sym:"Na", z:11, name:"申鹤", cls:"重装", cost:6, color:"#ffd94d",
   hair:"#f2c14e", hairStyle:"long", acc:"crown", eye:"#2e7d32", coat:"#274156",
   target:[2,2,6,1,0,0,0], cfg:"[Ne]3s¹",
   tip:"构造原理：2p 排满后，电子进入能量更高的 3s——钠唯一的价电子就在 3s¹。",
-  hp:2600, atk:160, intv:0.8, range:1.15, block:2, splash:0, armor:0.35, dmgType:"phys",
+  hp:2600, atk:160, intv:0.8, range:1.15, block:2, splash:0, armor:0.35, dmgType:"phys", el:"火", val:1,
   desc:"冰翎重装，长枪横扫，稳稳挡住两名敌人。",
   skill:{name:"冰翎",cd:25,desc:"自身与周围 1 格内友军攻击 +40%，持续 8 秒。"}},
  {key:"Mg", sym:"Mg", z:12, name:"纳西妲", cls:"术师", cost:12, color:"#69d97c",
   hair:"#3f5a46", hairStyle:"long", acc:"horn", eye:"#c62828", coat:"#2e4638",
   target:[2,2,6,2,0,0,0], cfg:"[Ne]3s²",
   tip:"3s 轨道被 2 个自旋相反的电子占满——这是按构造原理依次填满的结果（半满/全满更稳定的论证，留给铬、铜那样的特例）。",
-  hp:750, atk:210, intv:1.05, range:2.3, block:0, splash:0.5, dmgType:"arts",
+  hp:750, atk:210, intv:1.05, range:2.3, block:0, splash:0.5, dmgType:"arts", el:"草", val:2,
   desc:"草之神，远程法伤，灭净三业领域挂草。",
   skill:{name:"智慧之种",cd:30,desc:"立即获得 15 点部署费用。"}},
  {key:"Cl", sym:"Cl", z:17, name:"哥伦比亚", cls:"术师", cost:11, color:"#57c8ff",
   hair:"#7a5230", hairStyle:"twin", acc:"ears", eye:"#1e88e5", coat:"#31517a",
   target:[2,2,6,2,5,0,0], cfg:"[Ne]3s²3p⁵",
   tip:"洪特规则：3p 的 5 个电子先单占 3 个轨道，再配对其中 2 个，只剩一个未成对电子。",
-  hp:680, atk:205, intv:1.05, range:2.3, block:0, splash:0.75, dmgType:"arts",
+  hp:680, atk:205, intv:1.05, range:2.3, block:0, splash:0.75, dmgType:"arts", el:"雷", val:7,
   desc:"范围法术，命中点周围敌人一并受伤。",
   skill:{name:"月蚀毒雾",cd:25,desc:"射程内所有敌人中毒 6 秒（每秒 60 伤害）并减速 30%。"}},
  {key:"Fe", sym:"Fe", z:26, name:"芙宁娜", cls:"术师", cost:14, color:"#cfd6dd",
   hair:"#dfe8dd", hairStyle:"long", acc:"horn2", eye:"#2e9e6b", coat:"#4c5a54",
   target:[2,2,6,2,6,2,6], cfg:"[Ar]3d⁶4s²",
   tip:"构造原理：4s 能量低于 3d，必须先填 4s²，再往 3d 填 6 个电子。成阳离子时先失去 4s 电子。",
-  hp:900, atk:230, intv:1.0, range:2.4, block:0, splash:0, dmgType:"arts",
+  hp:900, atk:230, intv:1.0, range:2.4, block:0, splash:0, dmgType:"arts", el:"岩", val:2,
   desc:"水之歌者，远程法伤，召唤物助战。",
   skill:{name:"万众狂欢",cd:30,desc:"召唤海龙助战 15 秒（生命 800、攻击 120、挡 1）。"}},
  {key:"Cu", sym:"Cu", z:29, name:"八重神子", cls:"近卫", cost:13, color:"#e8b07d",
   hair:"#e8e8ec", hairStyle:"short", acc:"leopard", eye:"#546e7a", coat:"#23272e",
   target:[2,2,6,2,6,1,10], cfg:"[Ar]3d¹⁰4s¹",
   tip:"特例！铜不是 3d⁹4s²：3d 全满（3d¹⁰）、4s 半满的排布能量更低、更稳定，所以电子宁可从 4s 挪一个去填满 3d。（简化说法：4s 与 3d 能量相近，电子间排斥与交换能共同决定了这个结果。）",
-  hp:1250, atk:225, intv:0.9, range:1.35, block:1, splash:0, dmgType:"phys",
+  hp:1250, atk:225, intv:0.9, range:1.35, block:1, splash:0, dmgType:"phys", el:"雷", val:1,
   desc:"高攻近卫，真银斩式的单点爆发。",
   skill:{name:"杀生樱",cd:25,desc:"在身边种下杀生樱，12 秒内每 1.5 秒对一名敌人造成 150 点雷伤。"}},
  {key:"Zn", sym:"Zn", z:30, name:"桑多涅", cls:"重装", cost:12, color:"#8e7cc3",
   hair:"#c9a0dc", hairStyle:"long", acc:"horn", eye:"#7b1fa2", coat:"#4a3b5c",
   target:[2,2,6,2,6,2,10], cfg:"[Ar]3d¹⁰4s²",
   tip:"构造原理：4s 能量低于 3d，先填满 4s² 再填 3d；锌的 3d 全满 10 个电子、4s² 全满，是特别稳定的全满排布。",
-  hp:2300, atk:145, intv:0.9, range:1.15, block:2, splash:0, armor:0.35, dmgType:"phys",
+  hp:2300, atk:145, intv:0.9, range:1.15, block:2, splash:0, armor:0.35, dmgType:"phys", el:"雷", val:2,
   desc:"木偶执行官，人偶替身挡在前方，一次阻挡 2 名敌人。",
   skill:{name:"人偶军团",cd:30,desc:"召唤一个人偶助战 15 秒（生命 600、攻击 100、挡 1）。"}}
 ];
+/* ================= 新增：元素反应 / 羁绊 / 克制 / 词缀 / 每日 / 无尽 ================= */
+/* 元素映射（化学 + 原神习惯）：H 水、C 风、O 冰、Na 火、Mg 草、Cl 雷、Fe 岩、Cu 雷、Zn 雷（电即雷） */
+var EL_ORDER=["水","火","冰","雷","风","草","岩"];
+var EL_COLOR={水:"#38b6ff",火:"#ff6b35",冰:"#bfe9ff",雷:"#b388ff",风:"#52e39a",草:"#69d97c",岩:"#d8b25a"};
+var REACTIONS={
+ "水+冰":{name:"冻结",color:"#bfe9ff"},
+ "水+火":{name:"蒸发",color:"#ff9d5c"},
+ "水+雷":{name:"感电",color:"#b388ff"},
+ "水+草":{name:"绽放",color:"#69d97c"},
+ "水+风":{name:"扩散",color:"#52e39a"},
+ "水+岩":{name:"结晶",color:"#d8b25a"},
+ "火+冰":{name:"融化",color:"#ffb03a"},
+ "火+雷":{name:"超载",color:"#ff6b35"},
+ "火+草":{name:"燃烧",color:"#ff8c42"},
+ "火+风":{name:"扩散",color:"#52e39a"},
+ "火+岩":{name:"结晶",color:"#d8b25a"},
+ "冰+雷":{name:"超导",color:"#ce93d8"},
+ "冰+风":{name:"扩散",color:"#52e39a"},
+ "冰+岩":{name:"结晶",color:"#d8b25a"},
+ "雷+草":{name:"激化",color:"#b388ff"},
+ "雷+风":{name:"扩散",color:"#52e39a"},
+ "雷+岩":{name:"结晶",color:"#d8b25a"},
+ "风+草":{name:"扩散",color:"#52e39a"},
+ "风+岩":{name:"扩散",color:"#52e39a"},
+ "草+岩":{name:"结晶",color:"#d8b25a"}
+};
+function reactionKey(a,b){ return EL_ORDER.indexOf(a)<EL_ORDER.indexOf(b)?a+"+"+b:b+"+"+a; }
+function applyElement(e,el,byDef,isSkill){
+ if(!e||e.dead) return false;
+ var now=S.time;
+ if(!e.aura||e.aura.until<=now){ e.aura={el:el,until:now+4}; return false; }
+ if(e.aura.el===el){ e.aura.until=now+4; return false; }
+ var other=e.aura.el;
+ e.aura=null;
+ doReaction(e,other,el,byDef,isSkill);
+ return true;
+}
+function doReaction(e,el1,el2,atkDef,isSkill){
+ var r=REACTIONS[reactionKey(el1,el2)];
+ if(!r) return;
+ var base=(atkDef&&atkDef.atk)||100;
+ var mult=isSkill?2:1;
+ var name=r.name;
+ if(name==="冻结"){ e.frozenUntil=S.time+2; }
+ else if(name==="超导"){ e.defDownUntil=S.time+5; }
+ else if(name==="蒸发"){ damageEnemy(e,base*1.5*mult,null,true); }
+ else if(name==="融化"){ damageEnemy(e,base*2*mult,null,true); }
+ else if(name==="感电"){ damageEnemy(e,base*1*mult,null,true); e.shockUntil=S.time+3; e.shockDps=30*mult; }
+ else if(name==="超载"){ damageEnemy(e,base*1.5*mult,null,true); S.enemies.forEach(function(o){ if(o!==e&&!o.dead&&dist(o,e)<=CELL*1.5) damageEnemy(o,base*1.5*mult,null,true); }); S.fx.push({k:"boom",x:e.x,y:e.y,t:0.3,max:0.3,color:"#ff6b35"}); }
+ else if(name==="绽放"){ damageEnemy(e,base*1.2*mult,null,true); S.enemies.forEach(function(o){ if(o!==e&&!o.dead&&dist(o,e)<=CELL*1.5) damageEnemy(o,base*1.2*mult,null,true); }); S.fx.push({k:"boom",x:e.x,y:e.y,t:0.3,max:0.3,color:"#69d97c"}); }
+ else if(name==="扩散"){ damageEnemy(e,base*1*mult,null,true); var other=el1==="风"?el2:el1; S.enemies.forEach(function(o){ if(o!==e&&!o.dead&&dist(o,e)<=CELL*1.5){ damageEnemy(o,base*1*mult,null,true); if(!o.aura||o.aura.el!==other) o.aura={el:other,until:S.time+4}; } }); S.fx.push({k:"boom",x:e.x,y:e.y,t:0.3,max:0.3,color:"#52e39a"}); }
+ else if(name==="燃烧"){ e.burnUntil=S.time+3; e.burnDps=50*mult; }
+ else if(name==="激化"){ damageEnemy(e,base*1.5*mult,null,true); }
+ else if(name==="结晶"){
+   damageEnemy(e,base*0.5*mult,null,true);
+   if(atkDef){ var pl=null; S.placed.forEach(function(q){ if(q.def.key===atkDef.key) pl=q; }); if(pl){ pl.shieldAmt=(pl.shieldAmt||0)+150; pl.shieldUntil=S.time+5; } }
+ }
+ S.fx.push({k:"react",x:e.x,y:e.y-e.r-16,txt:name+"！",t:0.9,max:0.9,color:r.color});
+}
+
+/* ---------- 成键羁绊 ---------- */
+var BONDS=[
+ {id:"H2O", a:"H", b:"O", label:"H₂O", color:"#38b6ff", fx:"两者持续回血", text:"H + O → H₂O：两者持续回血！"},
+ {id:"NaCl", a:"Na", b:"Cl", label:"NaCl", color:"#ffd94d", fx:"双方攻击 +15%", text:"Na + Cl → NaCl：双方攻击 +15%！"},
+ {id:"ZnCu", a:"Zn", b:"Cu", label:"锌铜电池", color:"#b388ff", fx:"两者攻速 +20%", text:"Zn + Cu → 锌铜原电池：两者攻速 +20%！"},
+ {id:"FeO", a:"Fe", b:"O", label:"生锈", color:"#ff8c42", fx:"Fe 攻击 +25%，受伤 +20%", text:"Fe + O → 生锈：Fe 攻击 +25%，但受伤 +20%！"}
+];
+function bondHintFor(op){
+ var out=[];
+ BONDS.forEach(function(b){ if(b.a===op.key) out.push(b.b+" → "+b.label); else if(b.b===op.key) out.push(b.a+" → "+b.label); });
+ return out.length?("可成键："+out.join("、")):"";
+}
+function findPlaced(key){ var r=null; S.placed.forEach(function(p){ if(p.def.key===key&&!p.gone) r=p; }); return r; }
+function areAdjacent(p,q){ return Math.abs(p.c-q.c)+Math.abs(p.r-q.r)===1; }
+function computeBonds(){
+ S.placed.forEach(function(p){ p.bondAtk=1; p.bondSpd=1; p.bondRegen=false; p.bondRust=false; p.bondId=null; });
+ var active=[];
+ BONDS.forEach(function(b){
+   var pa=findPlaced(b.a), pb=findPlaced(b.b);
+   if(pa&&pb&&areAdjacent(pa,pb)){
+     active.push({def:b,a:pa,b:pb});
+     pa.bondId=b.id; pb.bondId=b.id;
+     if(b.id==="NaCl"){ pa.bondAtk=1.15; pb.bondAtk=1.15; }
+     if(b.id==="ZnCu"){ pa.bondSpd=0.8; pb.bondSpd=0.8; }
+     if(b.id==="H2O"){ pa.bondRegen=true; pb.bondRegen=true; }
+     if(b.id==="FeO"){ var fe=(pa.def.key==="Fe")?pa:pb; fe.bondAtk=1.25; fe.bondRust=true; }
+   }
+ });
+ S.bonds=active;
+ return active;
+}
+function activeBonds(){ return S.bonds||[]; }
+function bondSignature(){
+ var keys=S.placed.filter(function(p){return !p.gone;}).map(function(p){return p.def.key;}).sort().join(",");
+ var bonds=(S.bonds||[]).map(function(b){return b.def.id;}).sort().join(",");
+ return keys+"|"+bonds;
+}
+function updateBondPanel(){
+ var box=document.getElementById("bondList"); if(!box) return;
+ var html="";
+ BONDS.forEach(function(b){
+   var pa=findPlaced(b.a), pb=findPlaced(b.b);
+   var st="off", tag="未部署";
+   if(pa&&pb){ if(areAdjacent(pa,pb)){ st="on"; tag="✓ 已成键"; } else { st="near"; tag="未相邻"; } }
+   html+='<div class="bondRow '+st+'"><span class="bondPair">'+b.a+" + "+b.b+" → "+b.label+'</span><span class="bondFx">'+b.fx+'</span><span class="bondTag">'+tag+'</span></div>';
+ });
+ box.innerHTML=html;
+}
+
+/* ---------- 价电子克制 ---------- */
+function valenceMult(val,gap){
+ if(val+gap===8) return 2;
+ if(val===gap) return 0.5;
+ return 1;
+}
+
+/* ---------- 敌人词缀 ---------- */
+var AFFIX_NAMES={shield:"惰性气体壳",stealth:"隐身",split:"分裂",rage:"狂暴"};
+var AFFIX_GLYPH={shield:"盾",stealth:"隐",split:"分",rage:"狂"};
+var AFFIX_COLOR={shield:"#38e1ff",stealth:"#b388ff",split:"#ff9f43",rage:"#ff5a5a"};
+function affixForWave(n){
+ if(S&&S.daily&&S.dailyAffix) return S.dailyAffix[n]||null;
+ if(n>effTotal()){ var arr=["shield","stealth","split","rage"]; return arr[n%4]; }
+ if(TOTAL_WAVES===6){ return {1:"shield",2:"stealth",3:"split",4:"rage",5:"shield",6:"rage"}[n]||null; }
+ return {4:"split",5:"rage"}[n]||null;
+}
+
+/* ---------- 每日挑战 / 无尽 ---------- */
+var DAILY_WAVES=[
+ ["bug","bug","bug","bug","bug","bug","bug","bug"],
+ ["bug","bug","thug","bug","bug","thug","bug","bug","thug","bug","bug","thug","bat","bat"],
+ ["bug","bug","thug","bug","heavy","thug","bug","thug","bug","bug","thug","bug","thug","bat","healer"],
+ ["bug","thug","bug","bug","heavy","thug","bug","thug","heavy","bug","thug","bug","thug","bug","heavy","thug","bat","bat","healer"],
+ ["bug","thug","bug","heavy","thug","bug","thug","heavy","bug","thug","bug","heavy","thug","bug","thug","heavy","bug","thug","heavy","bug","bat","bat","healer","healer"],
+ ["boss","bug","thug","heavy","bug","thug","heavy","bug","thug","heavy","colossus","bat","healer"]
+];
+var DAILY_ETYPES={
+ bug:  {name:"源石虫",   hp:230,  spd:1.45, dmg:55,  score:10, gold:10, r:13, color:"#ff9f43", leak:1, pdef:0, gap:1},
+ thug: {name:"整合暴徒", hp:680,  spd:0.8,  dmg:95,  score:25, gold:25, r:15, color:"#c0392b", leak:2, pdef:0.15, gap:2},
+ heavy:{name:"重装暴徒", hp:2300, spd:0.44, dmg:170, score:80, gold:80, r:19, color:"#8d9bb0", leak:3, pdef:0.5, gap:3},
+ boss: {name:"整合首领", hp:3800, spd:0.38, dmg:220, score:200, gold:200, r:22, color:"#9b59b6", leak:5, pdef:0.6, gap:7},
+ bat:  {name:"源石飞蝠", hp:120, spd:2.2, dmg:30, score:15, gold:15, r:12, color:"#b388ff", leak:1, pdef:0, fly:true, gap:1},
+ healer:{name:"源石愈合者", hp:700, spd:0.6, dmg:50, score:40, gold:40, r:15, color:"#52e39a", leak:2, pdef:0.1, heal:true, gap:2},
+ colossus:{name:"整合巨像", hp:6000, spd:0.3, dmg:300, score:400, gold:400, r:26, color:"#7b1fa2", leak:8, pdef:0.7, gap:6}
+};
+function mulberry32(a){ return function(){ a|=0; a=a+0x6D2B79F5|0; var t=Math.imul(a^a>>>15,1|a); t=t+Math.imul(t^t>>>7,61|t)^t; return ((t^t>>>14)>>>0)/4294967296; }; }
+function effTotal(){ return (S&&S.daily)?DAILY_WAVES.length:TOTAL_WAVES; }
+function effMaxHp(){ return (S&&S.daily)?10:MAX_HP; }
+function effWaveBonus(){ return (S&&S.daily)?4:WAVE_BONUS; }
+function waveTable(n){
+ if(S&&S.daily) return DAILY_WAVES[n-1]||endlessWave(n);
+ if(n<=TOTAL_WAVES) return WAVES[n-1];
+ return endlessWave(n);
+}
+function endlessWave(n){
+ var k=n-effTotal();
+ var list=[], i;
+ var bugs=6+Math.min(10,k), thugs=3+Math.min(6,k), heavies=1+Math.min(4,Math.floor(k/2));
+ for(i=0;i<bugs;i++) list.push("bug");
+ for(i=0;i<thugs;i++) list.push("thug");
+ for(i=0;i<heavies;i++) list.push("heavy");
+ if(k>=2){ list.push("bat"); list.push("bat"); }
+ if(k>=3){ list.push("healer"); }
+ if(k%5===0){ list.push("colossus"); }
+ var rnd=(S&&S.rng)||Math.random;
+ for(i=list.length-1;i>0;i--){ var j=Math.floor(rnd()*(i+1)); var tmp=list[i]; list[i]=list[j]; list[j]=tmp; }
+ return list;
+}
+var DAILY_KEY="ysdx_daily_v1", ENDLESS_KEY="ysdx_endless_v1";
+function getDaily(){ try{ var d=JSON.parse(localStorage.getItem(DAILY_KEY)); if(d&&typeof d.streak==="number") return d; }catch(e){} return {lastDate:"",streak:0}; }
+function getDailyStreak(){ return getDaily().streak; }
+function recordDaily(dateKey){
+ var d=getDaily();
+ if(d.lastDate===dateKey) return d.streak;
+ var y=new Date(dateKey+"T00:00:00"); y.setDate(y.getDate()-1);
+ var yKey=y.getFullYear()+"-"+String(y.getMonth()+1).padStart(2,"0")+"-"+String(y.getDate()).padStart(2,"0");
+ d.streak=(d.lastDate===yKey)?d.streak+1:1;
+ d.lastDate=dateKey;
+ try{ localStorage.setItem(DAILY_KEY,JSON.stringify(d)); }catch(e){}
+ return d.streak;
+}
+function getEndlessBest(){ try{ var b=JSON.parse(localStorage.getItem(ENDLESS_KEY)); if(b&&typeof b.wave==="number") return b; }catch(e){} return {wave:0,date:"—"}; }
+function saveEndlessBest(w){ try{ localStorage.setItem(ENDLESS_KEY,JSON.stringify({wave:w,date:new Date().toLocaleDateString()})); }catch(e){} }
+function refreshDailyLine(){
+ var el=document.getElementById("dailyLine"); if(!el) return;
+ var d=getDaily(), eb=getEndlessBest();
+ var t="";
+ if(d.streak>0) t+="🔥 每日挑战连胜 "+d.streak+" 天";
+ if(eb.wave>0) t+=(t?" · ":"")+"无尽最高：第 "+eb.wave+" 波";
+ el.textContent=t;
+}
+function starFor(win){ if(win&&S.hp>=effMaxHp()) return 3; if(win) return 2; return 1; }
+function resultText(){
+ var win=!!S.resultWin;
+ var stars="⭐".repeat(starFor(win));
+ var clearTxt=win?"6波全清":("第 "+S.wave+" 波");
+ return "[源石电子防线·每日挑战 "+S.daily.dateLabel+"] 困难 "+stars+" "+clearTxt+" | 击杀"+S.kills+" 漏怪"+S.leaks+" | 分数 "+S.score.toLocaleString()+"\nhttps://hhaikuotiankong06-bot.github.io/git/";
+}
+function startDaily(){
+ var today=new Date();
+ var key=today.getFullYear()+"-"+String(today.getMonth()+1).padStart(2,"0")+"-"+String(today.getDate()).padStart(2,"0");
+ var seed=today.getFullYear()*10000+(today.getMonth()+1)*100+today.getDate();
+ resetGame(true);
+ DP_MAX=40;
+ S.daily={dateKey:key,dateLabel:String(today.getMonth()+1)+"-"+String(today.getDate()),seed:seed};
+ S.rng=mulberry32(seed);
+ S.dailyAffix={};
+ for(var w=1;w<=6;w++){ S.dailyAffix[w]=["shield","stealth","split","rage"][Math.floor(S.rng()*4)]; }
+ S.hp=10; S.dp=18;
+ S.started=true;
+ var st=getDailyStreak();
+ logMsg("每日挑战 "+S.daily.dateLabel+"：今天全服同一套波次（困难 6 波），结算可复制战绩比拼。"+(st>0?"当前连胜 "+st+" 天。":""),"tip");
+ updateHUD(); refreshBestLine(); refreshDailyLine();
+}
+function makePoster(){
+ var c=document.createElement("canvas"); c.width=720; c.height=1080;
+ var g=c.getContext("2d");
+ function rr(x,y,w,h,r){ g.beginPath(); g.moveTo(x+r,y); g.arcTo(x+w,y,x+w,y+h,r); g.arcTo(x+w,y+h,x,y+h,r); g.arcTo(x,y+h,x,y,r); g.arcTo(x,y,x+w,y,r); g.closePath(); }
+ g.fillStyle="#0b0e13"; g.fillRect(0,0,720,1080);
+ g.fillStyle="rgba(247,208,56,.09)"; g.fillRect(0,0,720,300);
+ g.strokeStyle="#2a323f"; g.lineWidth=2; g.strokeRect(20,20,680,1040);
+ g.textAlign="center";
+ g.fillStyle="#f7d038"; g.font="800 62px sans-serif";
+ g.fillText("源石电子防线",360,125);
+ g.fillStyle="#38e1ff"; g.font="20px sans-serif";
+ g.fillText("化学塔防 · 电子排布解谜",360,172);
+ var win=!!S.resultWin;
+ var mode=S.daily?("每日挑战 "+S.daily.dateLabel):(S.endless?"无尽模式":(TOTAL_WAVES===6?"困难":"简单"));
+ g.fillStyle="#e8ecf1"; g.font="28px sans-serif";
+ g.fillText(mode+"  "+"⭐".repeat(starFor(win)),360,245);
+ var els=["H","C","O","Na","Mg","Cl","Fe","Cu","Zn"];
+ var cols=["#ff5d5d","#ffb03a","#ff9ecb","#ffd94d","#69d97c","#57c8ff","#cfd6dd","#e8b07d","#8e7cc3"];
+ for(var i=0;i<9;i++){
+   var x=60+i*70;
+   g.fillStyle=cols[i]; rr(x,295,58,58,8); g.fill();
+   g.fillStyle="#0b0e13"; g.font="800 19px monospace";
+   g.fillText(els[i],x+29,332);
+ }
+ g.textAlign="left";
+ var rows=[
+   ["抵挡波次", S.endless?("第 "+S.wave+" 波（无尽）"):((win?effTotal():S.wave)+" / "+effTotal())],
+   ["基地生命", Math.max(0,S.hp)+" / "+effMaxHp()],
+   ["击破敌人", S.kills+" 名"],
+   ["漏怪", S.leaks+" 名"],
+   ["完成排布", S.solvedCount+" 次"],
+   ["本次分数", S.score+" 分"]
+ ];
+ g.font="26px sans-serif";
+ var y=440;
+ rows.forEach(function(r){
+   g.fillStyle="#9aa7b5"; g.fillText(r[0],90,y);
+   g.fillStyle="#e8ecf1"; g.font="800 26px sans-serif"; g.fillText(r[1],300,y); g.font="26px sans-serif";
+   y+=62;
+ });
+ g.strokeStyle="#2a323f"; g.beginPath(); g.moveTo(90,850); g.lineTo(630,850); g.stroke();
+ g.textAlign="center";
+ g.fillStyle="#f7d038"; g.font="24px monospace";
+ g.fillText("https://hhaikuotiankong06-bot.github.io/git/",360,910);
+ g.fillStyle="#9aa7b5"; g.font="20px sans-serif";
+ g.fillText("长按保存图片，分享给好友一起玩",360,955);
+ g.fillStyle="#5f6d7d"; g.font="16px sans-serif";
+ g.fillText("源石电子防线 · 同人学习小游戏",360,1010);
+ try{
+   document.getElementById("posterImg").src=c.toDataURL("image/png");
+   document.getElementById("posterBox").style.display="block";
+ }catch(err){
+   logMsg("海报生成失败（浏览器限制），请直接截图分享。","bad");
+ }
+}
+
+/* ---------- Cu 隐藏特性（3d¹⁰全满） ---------- */
+function cuTraitText(){
+ if(S.cuRevealed) return "隐藏特性：3d¹⁰全满，暴击率 +15%";
+ return "隐藏特性：？？？";
+}
+function revealCu(why){
+ if(S.cuRevealed) return;
+ S.cuRevealed=true;
+ logMsg("八重神子的隐藏特性揭晓：铜的 3d¹⁰ 全满排布特别稳定，暴击率 +15%！（"+why+"）","good");
+ refreshCards();
+}
+
+/* ---------- 卖出 ---------- */
+function updateSellBtn(p){
+ var b=document.getElementById("sellBtn");
+ if(!p||p.gone||p.summon){ b.style.display="none"; return; }
+ b.style.display="block";
+ var full=(p.wavePlaced===S.wave&&!p.fired);
+ var dpR=full?(p.invested||p.def.cost):Math.floor((p.invested||p.def.cost)*0.7);
+ var gdR=full?(p.upgGold||0):Math.floor((p.upgGold||0)*0.7);
+ b.textContent="卖出该干员（返还 "+dpR+" 费"+(gdR>0?" + "+gdR+" 金币":"")+(full?"，本波未开火全额":"")+"）";
+}
+
+/* ---------- 长按详情 ---------- */
+function addLongPress(el,fn){
+ var t=null;
+ function start(ev){ if(t) return; t=setTimeout(function(){ t=null; el._lpFired=true; var pt=(ev.touches&&ev.touches[0])||(ev.changedTouches&&ev.changedTouches[0])||ev; fn(pt); },500); }
+ function cancel(){ if(t){ clearTimeout(t); t=null; } }
+ el.addEventListener("touchstart",start,{passive:true});
+ el.addEventListener("touchend",cancel);
+ el.addEventListener("touchmove",cancel);
+ el.addEventListener("mousedown",start);
+ el.addEventListener("mouseup",cancel);
+ el.addEventListener("mouseleave",cancel);
+}
+function showOpDetail(op){
+ if(op.key==="Cu") revealCu("点开了八重神子的详情");
+ var el=document.getElementById("detailBody");
+ var bond=bondHintFor(op);
+ var extra="";
+ if(op.key==="Cu"){ extra="<br>隐藏特性："+(S.cuRevealed?"3d¹⁰全满：暴击率 +15%（半满/全满更稳定）":"？？？（第 5 波后揭晓）"); }
+ el.innerHTML="<h2 style='margin:0 0 6px'>"+op.name+" · "+op.sym+"（"+op.z+" 号元素）</h2>"
+  +"<div style='color:var(--dim);font-size:14px;line-height:1.9'>职业 <b style='color:var(--ink)'>"+op.cls+"</b> · 元素 <b style='color:var(--ink)'>"+op.el+"</b> · 价电子 "+op.val+" 个<br>"
+  +"费用 "+op.cost+" · 生命 "+op.hp+" · 攻击 "+op.atk+" · 攻速 "+op.intv+"s · 射程 "+op.range+" 格 · 阻挡 "+op.block+(op.armor?" · 减伤 "+Math.round(op.armor*100)+"%":"")+(op.splash>0?" · 范围伤害":"")+(op.dmgType==="arts"?" · 法术伤害":"")+"<br>"
+  +"电子排布 <span style='color:var(--cyan)'>"+op.cfg+"</span><br>"
+  +"技能「"+op.skill.name+"」（CD "+op.skill.cd+"s）："+op.skill.desc+"<br>"
+  +(bond?"🔗 "+bond+"<br>":"")
+  +op.desc+extra+"</div>";
+ document.getElementById("detailMask").classList.add("on");
+}
+
+/* ---------- 羁绊键线 / 无尽开局 ---------- */
+var EL_SHORT={水:"水",火:"火",冰:"冰",雷:"雷",风:"风",草:"草",岩:"岩"};
+function drawBondLines(){
+ if(!S||!S.bonds) return;
+ S.bonds.forEach(function(bd){
+   var ca=cellCenter(bd.a.c,bd.a.r), cb=cellCenter(bd.b.c,bd.b.r);
+   ctx.save();
+   ctx.strokeStyle=bd.def.color; ctx.lineWidth=3; ctx.globalAlpha=0.75;
+   ctx.setLineDash([8,5]);
+   ctx.beginPath(); ctx.moveTo(ca.x,ca.y); ctx.lineTo(cb.x,cb.y); ctx.stroke();
+   ctx.setLineDash([]);
+   ctx.globalAlpha=1;
+   var mx=(ca.x+cb.x)/2, my=(ca.y+cb.y)/2;
+   ctx.fillStyle="#0b0e13"; ctx.strokeStyle=bd.def.color; ctx.lineWidth=1.5;
+   ctx.beginPath(); ctx.arc(mx,my,11,0,Math.PI*2); ctx.fill(); ctx.stroke();
+   ctx.fillStyle=bd.def.color; ctx.font="bold 11px sans-serif"; ctx.textAlign="center"; ctx.textBaseline="middle";
+   ctx.fillText(bd.def.label==="锌铜电池"?"⚡":bd.def.label==="生锈"?"锈":"♥",mx,my);
+   ctx.restore();
+ });
+}
+function startEndless(){
+ resetGame(true);
+ S.endless=true;
+ logMsg("无尽模式：先守住全部 "+TOTAL_WAVES+" 波，第 "+(TOTAL_WAVES+1)+" 波起敌人不断变强，每 5 波一只弱化巨像。","tip");
+ updateHUD();
+}
+
+/* ---------- 每日连胜文案 ---------- */
+function dailyStreakText(){
+ var d=getDaily();
+ return d.streak>0?("🔥 每日挑战连胜 "+d.streak+" 天"):"";
+}
+
 var ETYPES={
  bug:  {name:"源石虫",   hp:230,  spd:1.45, dmg:55,  score:10, gold:10, r:13, color:"#ff9f43", leak:1, pdef:0},
  thug: {name:"整合暴徒", hp:680,  spd:0.8,  dmg:95,  score:25, gold:25, r:15, color:"#c0392b", leak:2, pdef:0.15},
@@ -409,6 +824,8 @@ var ETYPES={
  healer:{name:"源石愈合者", hp:700, spd:0.6, dmg:50, score:40, gold:40, r:15, color:"#52e39a", leak:2, pdef:0.1, heal:true},
  colossus:{name:"整合巨像", hp:6000, spd:0.3, dmg:300, score:400, gold:400, r:26, color:"#7b1fa2", leak:8, pdef:0.7}
 };
+ETYPES.bug.gap=1; ETYPES.bat.gap=1; ETYPES.thug.gap=2; ETYPES.healer.gap=2; ETYPES.heavy.gap=3; ETYPES.boss.gap=7; ETYPES.colossus.gap=6;
+ETYPES.minibug={name:"小源石虫", hp:60, spd:1.6, dmg:15, score:0, gold:0, r:10, color:"#ff9f43", leak:1, pdef:0, gap:1};
 var WAVES=[
  ["bug","bug","bug","bug","bug","bug","bug","bug"],
  ["bug","bug","thug","bug","bug","thug","bug","bug","thug","bug","bug","thug","bat","bat"],
@@ -473,7 +890,7 @@ var ION_Q=[
  {q:"锌 (Zn) 失去 2 个电子后变成什么离子？", opts:["Zn⁺","Zn²⁻","Zn²⁺","Zn"], a:2, why:"锌失去 4s² 两个电子。"},
  {q:"氮 (N) 得到 3 个电子后变成什么离子？", opts:["N³⁺","N²⁻","N","N³⁻"], a:3, why:"得到 3 个电子达到 8 电子稳定结构。"}
 ];
-var ENEMY_SHORT={bug:"虫",thug:"暴徒",heavy:"重装",boss:"首领",bat:"飞蝠",healer:"愈合者",colossus:"巨像"};
+var ENEMY_SHORT={bug:"虫",thug:"暴徒",heavy:"重装",boss:"首领",bat:"飞蝠",healer:"愈合者",colossus:"巨像",minibug:"小虫"};
 /* ---------- 最高分（localStorage） ---------- */
 var BEST_KEY="ysdx_highscore_v1";
 function getBest(){ try{ var b=JSON.parse(localStorage.getItem(BEST_KEY)); if(b&&typeof b.score==="number") return b; }catch(e){} return {score:0,wave:0,date:"—"}; }
@@ -517,9 +934,12 @@ function wp(i){return {x:(WAY[i][0]+0.5)*CELL, y:(WAY[i][1]+0.5)*CELL};}
 
 var S;
 function resetGame(autoStart){
+ DP_MAX=(TOTAL_WAVES===6?40:50);
  S={ started:!!autoStart, over:false, paused:false, speed:1,
    hp:10, dp:18, dpT:0, score:0, kills:0, solvedCount:0,
-   wave:0, waveActive:false, queue:[], spawnT:0,
+   wave:0, waveActive:false, queue:[], spawnT:0, leaks:0,
+   endless:false, daily:null, rng:null, dailyAffix:null, waveAffix:null, restUntil:0, cuRevealed:false,
+   pendingEndlessPrompt:false, resultWin:false,
    enemies:[], placed:[], fx:[], totems:[], solved:{}, armed:null, sel:null, time:0, gold:0, skillCd:{},
    pendingDeploy:null, coolUntil:{}, hover:null };
  document.getElementById("endMask").classList.remove("on");
@@ -530,7 +950,7 @@ function resetGame(autoStart){
  document.getElementById("pauseBtn").textContent="暂停";
  document.getElementById("speedBtn").textContent="倍速 ×1";
  document.getElementById("log").innerHTML="";
- updateHUD(); renderDeck(); clearSel(); refreshBestLine();
+ updateHUD(); renderDeck(); clearSel(); refreshBestLine(); refreshDailyLine(); updateBondPanel();
  logMsg(autoStart?"已重开行动，排布进度已重置。":"行动待命。部署干员后，点击「开始第 1 波」。","tip");
 }
 function logMsg(t,cls){
@@ -540,25 +960,45 @@ function logMsg(t,cls){
  while(el.children.length>30) el.removeChild(el.lastChild);
 }
 function waveSummary(n){
+ var tbl=waveTable(n); if(!tbl) return "";
  var cnt={};
- WAVES[n-1].forEach(function(t){cnt[t]=(cnt[t]||0)+1;});
- return Object.keys(cnt).map(function(t){return (ENEMY_SHORT[t]||t)+"×"+cnt[t];}).join(" ");
+ tbl.forEach(function(t){cnt[t]=(cnt[t]||0)+1;});
+ var s=Object.keys(cnt).map(function(t){return (ENEMY_SHORT[t]||t)+"×"+cnt[t];}).join(" ");
+ var af=affixForWave(n);
+ if(af) s+=" · 词缀："+AFFIX_NAMES[af];
+ return s;
+}
+function waveGapText(n){
+ var tbl=waveTable(n); if(!tbl) return "";
+ var seen={};
+ tbl.forEach(function(t){ var g=(ETYPES[t]||{}).gap; if(g!=null) seen[t]=g; });
+ return Object.keys(seen).map(function(t){return (ENEMY_SHORT[t]||t)+"缺"+seen[t]+"e⁻";}).join(" ");
 }
 function updateHUD(){
- document.getElementById("hudWave").textContent=(S.wave===0?"—":S.wave)+" / "+TOTAL_WAVES;
+ var tot=effTotal();
+ document.getElementById("hudWave").textContent=(S.wave===0?"—":S.wave)+" / "+(S.endless?"∞":tot);
  document.getElementById("hudHP").textContent=S.hp;
  document.getElementById("hudDP").textContent=Math.floor(S.dp);
  document.getElementById("hudScore").textContent=S.score;
  document.getElementById("hudGold").textContent=S.gold;
- var pct=S.wave===0?0:Math.round(S.wave/TOTAL_WAVES*100);
+ var pct=S.wave===0?0:(S.endless?Math.min(100,S.wave*10):Math.round(S.wave/tot*100));
  document.getElementById("wpFill").style.width=pct+"%";
- document.getElementById("wpText").textContent="第 "+(S.wave===0?"—":S.wave)+" / "+TOTAL_WAVES+" 波"
-   +(S.wave<TOTAL_WAVES?" · 下一波："+waveSummary(S.wave+1):" · 已是最后一波");
+ var wpTxt="第 "+(S.wave===0?"—":S.wave)+" / "+(S.endless?"∞":tot)+" 波";
+ if(!S.over&&!S.waveActive&&(S.endless||S.wave<tot)){
+   wpTxt+=" · 下一波："+waveSummary(S.wave+1);
+   var gt=waveGapText(S.wave+1);
+   if(gt) wpTxt+=" · 缺口："+gt;
+ } else if(!S.over&&!S.waveActive){ wpTxt+=" · 已是最后一波"; }
+ document.getElementById("wpText").textContent=wpTxt;
  var b=document.getElementById("waveBtn");
  if(S.over){ b.disabled=true; b.textContent="行动结束"; }
  else if(S.waveActive){ b.disabled=true; b.textContent="第 "+S.wave+" 波进攻中…（余 "+(S.queue.length+S.enemies.length)+"）"; }
- else if(S.wave>=TOTAL_WAVES){ b.disabled=true; b.textContent="全部波次已抵挡"; }
- else { b.disabled=false; b.textContent="开始第 "+(S.wave+1)+" 波 · "+waveSummary(S.wave+1); }
+ else if(S.wave>=tot&&!S.endless){ b.disabled=true; b.textContent="全部波次已抵挡"; }
+ else {
+   b.disabled=false;
+   var early=(S.time<S.restUntil)?("（提前开波 +5 费，剩 "+Math.ceil(S.restUntil-S.time)+"s）"):"";
+   b.textContent="开始第 "+(S.wave+1)+" 波 · "+waveSummary(S.wave+1)+early;
+ }
 }
 
 /* ================= 干员卡 ================= */
@@ -566,13 +1006,18 @@ function renderDeck(){
  var deck=document.getElementById("deck"); deck.innerHTML="";
  OPS.forEach(function(op,i){
    var card=document.createElement("button"); card.className="card"; card.id="card-"+op.key;
+   var bondHint=bondHintFor(op);
    card.innerHTML='<span class="cls">'+op.cls+'</span><span class="cost">'+op.cost+'</span>'
      +'<span class="lock" data-lock>需完成电子排布</span>'
      +'<div class="art">'+portrait(op,"d")+'</div>'
      +'<div class="meta"><div class="nm">'+op.name+'</div>'
-     +'<div class="el"><b>'+op.sym+'</b> · '+op.z+' 号元素</div>'
-     +'<div class="el st">DPS '+Math.round(op.atk/op.intv)+' · 射程 '+op.range+'格 · 挡 '+op.block+'</div></div>';
-   card.addEventListener("click",function(){ onCard(op,card); });
+     +'<div class="el"><b>'+op.sym+'</b> · '+op.z+' 号元素 · 元素 '+op.el+' · 价电子 '+op.val+'</div>'
+     +'<div class="el st">DPS '+Math.round(op.atk/op.intv)+' · 射程 '+op.range+'格 · 挡 '+op.block+'</div>'
+     +(bondHint?'<div class="el bond">🔗 '+bondHint+'</div>':"")
+     +(op.key==="Cu"?'<div class="el cuq" data-cuq>'+cuTraitText()+'</div>':"")
+     +'</div>';
+   card.addEventListener("click",function(){ if(card._lpFired){ card._lpFired=false; return; } onCard(op,card); });
+   addLongPress(card,function(){ showOpDetail(op); });
    deck.appendChild(card);
  });
  refreshCards();
@@ -589,11 +1034,13 @@ function refreshCards(){
    else { card.classList.remove("solved"); lock.textContent="需完成电子排布"; }
    card.classList.toggle("poor", S.dp<op.cost);
    card.classList.toggle("armed", S.armed===op);
+   var cuq=card.querySelector("[data-cuq]"); if(cuq) cuq.textContent=cuTraitText();
  });
 }
 function shake(el){ el.classList.remove("shake"); void el.offsetWidth; el.classList.add("shake"); }
 function onCard(op,card){
  if(S.over||!S.started) return;
+ if(op.key==="Cu") revealCu("点开了八重神子的卡片");
  if(!S.solved[op.key]){ openPuzzle(op); return; }
  if(isDeployed(op)){
    var pl=null; S.placed.forEach(function(q){ if(q.def.key===op.key) pl=q; });
@@ -816,41 +1263,95 @@ function cellCenter(c,r){ return {x:(c+0.5)*CELL, y:(r+0.5)*CELL}; }
 function dist(a,b){ var dx=a.x-b.x, dy=a.y-b.y; return Math.sqrt(dx*dx+dy*dy); }
 
 function startWave(){
- if(S.waveActive||S.wave>=TOTAL_WAVES||S.over) return;
+ if(S.waveActive||S.over) return;
+ if(S.wave>=effTotal()&&!S.endless) return;
  S.wave++;
- S.queue=WAVES[S.wave-1].slice();
+ if(S.time<S.restUntil){ S.dp=Math.min(DP_MAX,S.dp+5); logMsg("提前开波！部署费用 +5。","good"); }
+ S.waveAffix=affixForWave(S.wave);
+ var tbl=waveTable(S.wave);
+ S.queue=tbl.slice();
+ if(S.daily&&S.rng){ for(var i=S.queue.length-1;i>0;i--){ var j=Math.floor(S.rng()*(i+1)); var tmp=S.queue[i]; S.queue[i]=S.queue[j]; S.queue[j]=tmp; } }
  S.spawnT=0.5; S.waveActive=true;
- logMsg("第 "+S.wave+" 波开始，共 "+S.queue.length+" 名敌人。","tip");
+ logMsg("第 "+S.wave+" 波开始，共 "+S.queue.length+" 名敌人。"+(S.waveAffix?"本波词缀："+AFFIX_NAMES[S.waveAffix]+"。":""),"tip");
+ if(S.wave===5&&!S.cuRevealed) revealCu("第 5 波到了");
  updateHUD();
 }
 function spawnNext(){
- var t=S.queue.shift(), base=ETYPES[t];
+ var t=S.queue.shift(), base=S.daily?DAILY_ETYPES[t]:ETYPES[t];
  var scale=1+0.28*(S.wave-1);
+ if(S.wave>effTotal()) scale*=Math.pow(1.15,S.wave-effTotal());
+ var spdMul=S.wave>effTotal()?1+Math.min(0.3,0.02*(S.wave-effTotal())):1;
  var p0=wp(0);
  var e={type:t, name:base.name, hp:base.hp*scale, maxhp:base.hp*scale,
-   spd:base.spd, dmg:base.dmg, score:base.score, r:base.r, color:base.color,
+   spd:base.spd*spdMul, dmg:base.dmg, score:base.score, r:base.r, color:base.color,
    leak:base.leak, pdef:base.pdef, gold:base.gold||0, fly:!!base.fly, heal:!!base.heal,
+   gap:base.gap||0, affix:S.waveAffix||null, shield:0,
    seg:0, prog:0, x:p0.x, y:p0.y, atkT:0, blockedBy:null, flash:0, dead:false};
+ if(e.affix==="shield") e.shield=Math.round(e.maxhp*0.35);
+ if(S.wave>effTotal()&&t==="colossus"){ e.hp*=0.6; e.maxhp*=0.6; e.name="整合巨像（弱化）"; }
  S.enemies.push(e);
 }
-function damageEnemy(e,dmg,byOp,quiet){
+function damageEnemy(e,dmg,byOp,quiet,skill){
  if(e.dead) return;
- if(byOp&&byOp.dmgType!=="arts") dmg=dmg*(1-(e.pdef||0));
+ var dtype=byOp?(byOp.dmgType||"phys"):"dot";
+ /* 价电子克制：互补 2×，同类 0.5×，其他 1× */
+ var mult=1;
+ if(byOp&&byOp.val!=null&&e.gap!=null){ mult=valenceMult(byOp.val,e.gap); dmg*=mult; }
+ /* Cu 暴击（3d¹⁰全满） */
+ var crit=false;
+ if(byOp&&byOp.key==="Cu"&&Math.random()<0.15){ crit=true; dmg*=2; }
+ /* 惰性气体壳：法伤正常破盾，物理只磨掉 10% */
+ if(e.shield>0&&dtype!=="dot"){
+   if(dtype==="arts"){
+     if(dmg<=e.shield){ e.shield-=dmg; dmg=0; }
+     else { dmg-=e.shield; e.shield=0; }
+   } else {
+     var eff=dmg*0.1;
+     if(eff<=e.shield){ e.shield-=eff; dmg=0; }
+     else { var used=e.shield/0.1; e.shield=0; dmg=dmg-used; }
+   }
+ }
+ if(dtype!=="arts"&&dtype!=="dot") dmg=dmg*(1-(e.pdef||0)*(e.defDownUntil&&e.defDownUntil>S.time?0.6:1));
  e.hp-=dmg;
  if(!quiet){
    e.flash=0.12;
    var dmgN=0; S.fx.forEach(function(f){ if(f.k==="dmg") dmgN++; });
-   if(dmgN<24) S.fx.push({k:"dmg",x:e.x+(Math.random()*16-8),y:e.y-e.r-6,txt:Math.round(dmg),t:0.6,max:0.6,color:"#ffe9a8"});
+   if(dmgN<24){
+     var tag="";
+     if(crit) tag+="暴击";
+     if(mult===2) tag+="克制";
+     if(mult===0.5) tag+="抵抗";
+     S.fx.push({k:"dmg",x:e.x+(Math.random()*16-8),y:e.y-e.r-6,txt:(tag?tag+" ":"")+Math.round(dmg),t:0.6,max:0.6,color:crit?"#ffd94d":(mult===2?"#52e39a":(mult===0.5?"#9aa7b5":"#ffe9a8"))});
+   }
  }
  if(e.hp<=0&&!e.dead){
    e.dead=true; S.kills++; S.score+=e.score; S.gold+=e.gold||0;
    sfx("kill");
    if(byOp&&(byOp.cls==="先锋")) S.dp=Math.min(DP_MAX,S.dp+1);
+   if(e.affix==="split"&&e.type!=="minibug"){
+     for(var i=0;i<2;i++){
+       var mb={type:"minibug", name:"小源石虫", hp:60, maxhp:60, spd:1.6, dmg:15, score:0, r:10, color:"#ff9f43", leak:1, pdef:0, gold:0, fly:false, heal:false, gap:1, affix:null, shield:0, seg:e.seg, prog:e.prog, x:e.x+(i?14:-14), y:e.y, atkT:0, blockedBy:null, flash:0, dead:false};
+       S.enemies.push(mb);
+     }
+     logMsg("分裂！"+e.name+" 变成 2 只小源石虫。","");
+   }
+ }
+ /* 元素附着 / 反应 */
+ if(byOp&&byOp.el){
+   var reacted=applyElement(e,byOp.el,byOp,!!skill);
+   if(!reacted&&byOp.key){
+     var pl=null; S.placed.forEach(function(q){ if(q.def.key===byOp.key) pl=q; });
+     if(pl){
+       if(pl.windUntil&&pl.windUntil>S.time) applyElement(e,"风",byOp,!!skill);
+       if(pl.fireUntil&&pl.fireUntil>S.time) applyElement(e,"火",byOp,!!skill);
+     }
+   }
  }
 }
 
 /* ---------- 技能与升级的数值 ---------- */
-function effAtk(p){ var d=p.def||p; return Math.round(d.atk*(1+0.2*(p.lvl||0))*((p.buffUntil&&p.buffUntil>S.time)?(p.buffMul||1):1)); }
+function effAtk(p){ var d=p.def||p; return Math.round(d.atk*(1+0.2*(p.lvl||0))*((p.buffUntil&&p.buffUntil>S.time)?(p.buffMul||1):1)*(p.bondAtk||1)); }
+function atkIntv(p){ var d=p.def||p; return d.intv*(p.bondSpd||1); }
 function effRange(p){ var d=p.def||p; return Math.round(d.range*(1+0.1*(p.lvl||0))*10)/10; }
 function skillReady(p){ var sk=p.def.skill; if(!sk) return false; var cd=S.skillCd[p.def.key]||0; return S.time>=cd; }
 function skillCdLeft(p){ var cd=S.skillCd[p.def.key]||0; return Math.max(0,Math.ceil(cd-S.time)); }
@@ -864,27 +1365,29 @@ function castSkill(p){
  sfx("skill");
  var key=p.def.key;
  if(key==="H"){
-   S.enemies.forEach(function(e){ if(!e.dead){ e.slowUntil=S.time+5; e.slowMul=0.5; } });
-   logMsg("安娜丝塔夏释放「冰封敕令」：全场敌人减速 50%，持续 5 秒！","good");
+   S.enemies.forEach(function(e){ if(!e.dead){ e.slowUntil=S.time+5; e.slowMul=0.5; applyElement(e,"水",p.def,true); } });
+   logMsg("安娜丝塔夏释放「冰封敕令」：全场敌人减速 50% 5 秒，全场挂水！","good");
  } else if(key==="C"){
    var low=null;
    S.placed.forEach(function(q){ if(!q.gone&&!q.summon&&(!low||q.hp/q.def.hp<low.hp/low.def.hp)) low=q; });
-   if(low){ low.hp=Math.min(low.def.hp,low.hp+low.def.hp*0.4); low.buffUntil=S.time+8; low.buffMul=1.2; logMsg("沃雅妮莎释放「潮汐咏叹」：治疗 "+low.def.name+" 40% 生命，攻击 +20%（8 秒）。","good"); }
+   if(low){ low.hp=Math.min(low.def.hp,low.hp+low.def.hp*0.4); low.buffUntil=S.time+8; low.buffMul=1.2; low.windUntil=S.time+8; logMsg("沃雅妮莎释放「潮汐咏叹」：治疗 "+low.def.name+" 40% 生命，攻击 +20%（8 秒），其攻击额外挂风！","good"); }
  } else if(key==="O"){
    var far=null;
    S.enemies.forEach(function(e){ if(!e.dead&&e.x>=0&&dist(e,ctr)<=effRange(p)*CELL&&(!far||e.prog>far.prog)) far=e; });
-   if(far){ var dmg=effAtk(p)*5; S.enemies.forEach(function(e2){ if(!e2.dead&&dist(e2,far)<=CELL*1.5) damageEnemy(e2,dmg,{dmgType:"arts"}); }); S.fx.push({k:"boom",x:far.x,y:far.y,t:0.3,max:0.3,color:"#bfe9ff"}); logMsg("甘雨释放「霜华矢」：对最远敌人及周围造成 "+Math.round(dmg)+" 点冰伤！","good"); }
+   if(far){ var dmg=effAtk(p)*5; S.enemies.forEach(function(e2){ if(!e2.dead&&dist(e2,far)<=CELL*1.5) damageEnemy(e2,dmg,{dmgType:"arts",el:"冰",key:"O",val:6},false,true); }); S.fx.push({k:"boom",x:far.x,y:far.y,t:0.3,max:0.3,color:"#bfe9ff"}); logMsg("甘雨释放「霜华矢」：对最远敌人及周围造成 "+Math.round(dmg)+" 点冰伤！","good"); }
    else { S.skillCd[p.def.key]=S.time+2; logMsg("霜华矢：射程内没有敌人，技能未消耗（2 秒后可再试）。","bad"); }
  } else if(key==="Na"){
-   p.buffUntil=S.time+8; p.buffMul=1.4;
-   S.placed.forEach(function(q){ if(!q.gone&&q!==p&&dist(cellCenter(q.c,q.r),ctr)<=CELL*1.2){ q.buffUntil=S.time+8; q.buffMul=1.4; } });
-   logMsg("申鹤释放「冰翎」：自身与周围友军攻击 +40%，持续 8 秒！","good");
+   p.buffUntil=S.time+8; p.buffMul=1.4; p.fireUntil=S.time+8;
+   S.placed.forEach(function(q){ if(!q.gone&&q!==p&&dist(cellCenter(q.c,q.r),ctr)<=CELL*1.2){ q.buffUntil=S.time+8; q.buffMul=1.4; q.fireUntil=S.time+8; } });
+   logMsg("申鹤释放「冰翎」：自身与周围友军攻击 +40%（8 秒），其攻击额外挂火！","good");
  } else if(key==="Mg"){
    S.dp=Math.min(DP_MAX,S.dp+15);
-   logMsg("纳西妲释放「智慧之种」：部署费用 +15！","good");
+   S.enemies.forEach(function(e){ if(!e.dead) applyElement(e,"草",p.def,true); });
+   logMsg("纳西妲释放「智慧之种」：部署费用 +15，全场敌人挂草！","good");
  } else if(key==="Cl"){
-   S.enemies.forEach(function(e){ if(!e.dead&&dist(e,ctr)<=effRange(p)*CELL){ e.poisonUntil=S.time+6; e.poisonDps=60; e.slowUntil=Math.max(e.slowUntil||0,S.time+6); e.slowMul=Math.min(e.slowMul||1,0.7); } });
-   logMsg("哥伦比亚释放「月蚀毒雾」：射程内敌人中毒 6 秒并减速 30%！","good");
+   S.enemies.forEach(function(e){ if(!e.dead&&dist(e,ctr)<=effRange(p)*CELL){ e.poisonUntil=S.time+6; e.poisonDps=60; e.slowUntil=Math.max(e.slowUntil||0,S.time+6); e.slowMul=Math.min(e.slowMul||1,0.7); applyElement(e,"雷",p.def,true); } });
+   S.clRevealUntil=S.time+8;
+   logMsg("哥伦比亚释放「月蚀毒雾」：射程内敌人中毒 6 秒并减速 30%，全场挂雷并揭示隐身 8 秒！","good");
  } else if(key==="Fe"){
    var bestCell=null,bestD=1e9;
    for(var rr=0;rr<ROWS;rr++) for(var cc=0;cc<COLS;cc++){
@@ -893,10 +1396,11 @@ function castSkill(p){
      var d2=Math.abs(cc-p.c)+Math.abs(rr-p.r)+(onPath?0:6);
      if(d2<bestD){ bestD=d2; bestCell={c:cc,r:rr}; }
    }
+   S.enemies.forEach(function(e){ if(!e.dead&&dist(e,ctr)<=effRange(p)*CELL) applyElement(e,"岩",p.def,true); });
    if(bestCell){
-     var sd={key:"summon",name:"海龙",sym:"龙",cls:"近卫",cost:0,color:"#38e1ff",hp:800,atk:120,intv:0.9,range:2,block:1,splash:0,dmgType:"phys",cfg:"召唤物",tip:"芙宁娜召唤的海龙助战，持续 15 秒。"};
+     var sd={key:"summon",name:"海龙",sym:"龙",cls:"近卫",cost:0,color:"#38e1ff",hp:800,atk:120,intv:0.9,range:2,block:1,splash:0,dmgType:"phys",el:"水",val:1,cfg:"召唤物",tip:"芙宁娜召唤的海龙助战，持续 15 秒。"};
      S.placed.push({def:sd,c:bestCell.c,r:bestCell.r,hp:800,cd:0.3,blocking:0,gone:false,summon:true,expireAt:S.time+15,lvl:0});
-     logMsg("芙宁娜释放「万众狂欢」：海龙助战 15 秒！","good");
+     logMsg("芙宁娜释放「万众狂欢」：海龙助战 15 秒（水元素），技能给射程内敌人挂岩！","good");
    } else { S.skillCd[p.def.key]=S.time+2; logMsg("战场已满，海龙无处可去（2 秒后可再试）。","bad"); }
  } else if(key==="Cu"){
    S.totems.push({x:ctr.x,y:ctr.y,until:S.time+12,cd:0});
@@ -910,7 +1414,7 @@ function castSkill(p){
      if(d2<bestD){ bestD=d2; bestCell={c:cc,r:rr}; }
    }
    if(bestCell){
-     var sd={key:"summon",name:"人偶",sym:"偶",cls:"近卫",cost:0,color:"#8e7cc3",hp:600,atk:100,intv:0.9,range:1.35,block:1,splash:0,dmgType:"phys",cfg:"召唤物",tip:"桑多涅召唤的人偶助战，持续 15 秒。"};
+     var sd={key:"summon",name:"人偶",sym:"偶",cls:"近卫",cost:0,color:"#8e7cc3",hp:600,atk:100,intv:0.9,range:1.35,block:1,splash:0,dmgType:"phys",el:"雷",val:2,cfg:"召唤物",tip:"桑多涅召唤的人偶助战，持续 15 秒。"};
      S.placed.push({def:sd,c:bestCell.c,r:bestCell.r,hp:600,cd:0.3,blocking:0,gone:false,summon:true,expireAt:S.time+15,lvl:0});
      logMsg("桑多涅释放「人偶军团」：人偶助战 15 秒！","good");
    } else { S.skillCd[p.def.key]=S.time+2; logMsg("战场已满，人偶无处可去（2 秒后可再试）。","bad"); }
@@ -938,7 +1442,7 @@ function upgradeOp(){
  var lvl=p.lvl||0; if(lvl>=3) return;
  var cost=[30,60,120][lvl];
  if(S.gold<cost){ logMsg("金币不足：升级需要 "+cost+" 金币，当前 "+S.gold+"。","bad"); return; }
- S.gold-=cost; p.lvl=lvl+1;
+ S.gold-=cost; p.upgGold=(p.upgGold||0)+cost; p.lvl=lvl+1;
  sfx("upg");
  logMsg(p.def.name+" 升级到 Lv."+p.lvl+"！攻击 "+effAtk(p)+"、射程 "+effRange(p)+" 格。","good");
  selectOp(p); updateHUD();
@@ -1001,18 +1505,22 @@ function update(dt){
    if(e.dead) return;
    if(e.flash>0)e.flash-=dt;
    if(e.poisonUntil&&e.poisonUntil>S.time){ damageEnemy(e,(e.poisonDps||0)*dt,null,true); if(e.dead) return; }
+   if(e.burnUntil&&e.burnUntil>S.time){ damageEnemy(e,(e.burnDps||0)*dt,null,true); if(e.dead) return; }
+   if(e.shockUntil&&e.shockUntil>S.time){ e.shockT=(e.shockT||0)+dt; if(e.shockT>=1){ e.shockT=0; damageEnemy(e,e.shockDps||0,null,true); if(e.dead) return; } }
    if(e.heal){ e.healT=(e.healT||2)-dt; if(e.healT<=0){ e.healT=2; var healed=false; S.enemies.forEach(function(o){ if(!o.dead&&o!==e&&dist(o,e)<=CELL*1.6&&o.hp<o.maxhp){ o.hp=Math.min(o.maxhp,o.hp+80); healed=true; } }); if(healed) S.fx.push({k:"heal",x:e.x,y:e.y-e.r-8,t:0.5,max:0.5,color:"#52e39a"}); } }
    if(e.blockedBy){
      e.atkT-=dt;
      if(e.atkT<=0){
        e.atkT=1.0;
        var p=e.blockedBy;
-       var d=e.dmg*(p.def.armor?(1-p.def.armor):1);
+       var d=e.dmg*(p.def.armor?(1-p.def.armor):1)*(p.bondRust?1.2:1);
+       if(p.shieldUntil&&p.shieldUntil>S.time&&p.shieldAmt>0){ var ab=Math.min(p.shieldAmt,d); p.shieldAmt-=ab; d-=ab; }
        p.hp-=d;
        S.fx.push({k:"hit",x:cellCenter(p.c,p.r).x,y:cellCenter(p.c,p.r).y,t:0.18,max:0.18,color:"#ff5a5a"});
        if(p.hp<=0&&!p.gone){
          p.gone=true;
          S.coolUntil[p.def.key]=S.time+COOL_S;
+         computeBonds(); updateBondPanel();
          logMsg(p.def.name+" 被击倒，撤退离场！"+COOL_S+" 秒后可再次部署。","bad");
          if(S.sel===p) clearSel();
          refreshCards();
@@ -1023,11 +1531,13 @@ function update(dt){
    var target=wp(e.seg+1);
    var dx=target.x-e.x, dy=target.y-e.y, L=Math.sqrt(dx*dx+dy*dy);
    var slowMul=(e.slowUntil&&e.slowUntil>S.time)?(e.slowMul||0.5):1;
+   if(e.frozenUntil&&e.frozenUntil>S.time) slowMul=0;
+   if(e.affix==="rage"&&e.hp<e.maxhp*0.5) slowMul*=1.5;
    var step=e.spd*slowMul*CELL*dt;
    if(L<=step){ e.x=target.x; e.y=target.y; e.seg++; e.prog+=L; }
    else { e.x+=dx/L*step; e.y+=dy/L*step; e.prog+=step; }
    if(e.seg>=WAY.length-1){
-     e.dead=true; S.hp-=e.leak;
+     e.dead=true; S.hp-=e.leak; S.leaks++;
      logMsg(e.name+" 突破防线！基地生命 -"+e.leak+"，剩余 "+Math.max(0,S.hp)+" / "+MAX_HP,"bad");
      sfx("leak");
      updateHUD();
@@ -1043,14 +1553,15 @@ function update(dt){
    S.enemies.forEach(function(e){
      if(e.dead||e.x<0) return;
      if(e.fly&&isMelee(p.def)) return;
+     if(e.affix==="stealth"&&!(S.clRevealUntil&&S.clRevealUntil>S.time)&&p.def.cls!=="狙击") return;
      if(dist(e,ctr)<=effRange(p)*CELL&&(best===null||e.prog>best.prog)) best=e;
    });
    if(best){
-     p.cd=p.def.intv; p.face=best.x>=ctr.x?1:-1;
+     p.cd=atkIntv(p); p.fired=true; p.face=best.x>=ctr.x?1:-1;
      S.fx.push({k:"shot",x1:ctr.x,y1:ctr.y-8,x2:best.x,y2:best.y,t:0.09,max:0.09,color:p.def.color});
      if(p.def.splash>0){
        S.enemies.forEach(function(e2){
-         if(!e2.dead&&e2.x>=0&&!(e2.fly&&isMelee(p.def))&&dist(e2,best)<=p.def.splash*CELL) damageEnemy(e2,effAtk(p),p.def);
+         if(!e2.dead&&e2.x>=0&&!(e2.fly&&isMelee(p.def))&&!(e2.affix==="stealth"&&!(S.clRevealUntil&&S.clRevealUntil>S.time)&&p.def.cls!=="狙击")&&dist(e2,best)<=p.def.splash*CELL) damageEnemy(e2,effAtk(p),p.def);
        });
        S.fx.push({k:"boom",x:best.x,y:best.y,t:0.2,max:0.2,color:p.def.color});
      } else damageEnemy(best,effAtk(p),p.def);
@@ -1063,9 +1574,11 @@ function update(dt){
    t.cd=1.5;
    var best=null;
    S.enemies.forEach(function(e){ if(!e.dead&&e.x>=0&&dist(e,{x:t.x,y:t.y})<=2*CELL&&(best===null||e.prog>best.prog)) best=e; });
-   if(best){ damageEnemy(best,150,{dmgType:"arts"}); S.fx.push({k:"shot",x1:t.x,y1:t.y-6,x2:best.x,y2:best.y,t:0.09,max:0.09,color:"#b388ff"}); }
+   if(best){ damageEnemy(best,150,{dmgType:"arts",el:"雷",key:"Cu",val:1},false,true); S.fx.push({k:"shot",x1:t.x,y1:t.y-6,x2:best.x,y2:best.y,t:0.09,max:0.09,color:"#b388ff"}); }
  });
  S.totems=S.totems.filter(function(t){ return t.until>S.time; });
+ /* 羁绊回血（H₂O：两者每秒回 3% 生命） */
+ S.placed.forEach(function(p){ if(!p.gone&&p.bondRegen&&p.hp<p.def.hp){ p.hp=Math.min(p.def.hp,p.hp+p.def.hp*0.03*dt); } });
  /* 召唤物到期 */
  S.placed.forEach(function(p){ if(p.summon&&p.expireAt&&p.expireAt<=S.time&&!p.gone){ p.gone=true; logMsg(p.def.name+" 消散了。",""); if(S.sel===p) clearSel(); } });
  /* 清理 */
@@ -1076,27 +1589,40 @@ function update(dt){
  /* 波次结束 */
  if(S.waveActive&&!S.queue.length&&!S.enemies.length&&!S.over){
    S.waveActive=false;
-   if(S.wave>=TOTAL_WAVES){ gameOver(true); return; }
-   S.dp=Math.min(DP_MAX,S.dp+WAVE_BONUS);
-   logMsg("第 "+S.wave+" 波守住了！部署费用 +"+WAVE_BONUS+"，休整后开始下一波。","good");
-   showIon();
+   S.restUntil=S.time+10;
+   if(S.endless) saveEndlessBest(S.wave);
+   var bonus=effWaveBonus();
+   S.dp=Math.min(DP_MAX,S.dp+bonus);
+   if(S.wave>=effTotal()&&!S.endless){
+     logMsg("第 "+S.wave+" 波守住了！部署费用 +"+bonus+"。","good");
+     showIon(); S.pendingEndlessPrompt=true;
+   } else {
+     logMsg("第 "+S.wave+" 波守住了！部署费用 +"+bonus+"，休整后开始下一波（10 秒内开启下一波再 +5 费）。","good");
+     showIon();
+   }
  }
  updateHUD();
 }
 function gameOver(win){
  if(S.over) return;
- S.over=true; S.waveActive=false; sfx(win?"win":"lose");
+ S.over=true; S.waveActive=false; S.resultWin=win; sfx(win?"win":"lose");
  document.getElementById("endTitle").innerHTML= win? '<span class="win">行动完成 · 防线守住了</span>' : '<span class="lose">行动失败 · 基地失守</span>';
  var best=getBest();
  var isNew=S.score>best.score;
  if(isNew) saveBest(S.score,S.wave);
  var best2=getBest();
+ var stars=starFor(win);
  document.getElementById("endStats").innerHTML=
-   "抵挡波次 <b>"+(win?TOTAL_WAVES:S.wave)+" / "+TOTAL_WAVES+"</b><br>基地生命 <b>"+Math.max(0,S.hp)+" / "+MAX_HP+"</b><br>"
+   "抵挡波次 <b>"+S.wave+(S.endless?" （无尽）":" / "+effTotal())+"</b> · 星级 "+"⭐".repeat(stars)+"☆".repeat(3-stars)+"<br>基地生命 <b>"+Math.max(0,S.hp)+" / "+effMaxHp()+"</b> · 漏怪 <b>"+S.leaks+"</b> 名<br>"
    +"击破敌人 <b>"+S.kills+"</b> 名 · 金币 <b>"+S.gold+"</b><br>完成电子排布 <b>"+S.solvedCount+"</b> 次<br>本次分数 <b>"+S.score+"</b> 分"
    +(isNew?" <span style=\"color:var(--yel)\">★ 新纪录！</span>":"")
    +"<br>最高分 <b>"+best2.score+"</b> 分（第 "+best2.wave+" 波 · "+best2.date+"）"
+   +(S.daily?("<br>"+dailyStreakText()):"")
    +(win? "<br><br>构造原理、泡利原理、洪特规则——全都用上了。铜的 3d¹⁰4s¹ 特例也别忘了复习。":"<br><br>提示：先锋便宜回费快，先把费用滚起来；重装放在拐弯处阻挡，术师和狙击放在通道两侧输出。");
+ if(S.daily){ recordDaily(S.daily.dateKey); document.getElementById("copyBtn").style.display="block"; }
+ document.getElementById("posterBtn").style.display="block";
+ document.getElementById("posterBox").style.display="none";
+ document.getElementById("posterImg").src="";
  document.getElementById("endMask").classList.add("on");
  updateHUD();
 }
@@ -1139,6 +1665,8 @@ function draw(){
  if(S.armed){
    ctx.fillStyle="rgba(247,208,56,.13)";
    for(r=0;r<ROWS;r++) for(c=0;c<COLS;c++) if(canPlace(c,r,S.armed)) ctx.fillRect(c*CELL+3,r*CELL+3,CELL-6,CELL-6);
+   ctx.fillStyle="rgba(255,90,90,.13)";
+   for(r=0;r<ROWS;r++) for(c=0;c<COLS;c++) if(!canPlace(c,r,S.armed)) ctx.fillRect(c*CELL+3,r*CELL+3,CELL-6,CELL-6);
    if(S.hover&&canPlace(S.hover.c,S.hover.r,S.armed)){
      var hc=cellCenter(S.hover.c,S.hover.r);
      ctx.beginPath(); ctx.arc(hc.x,hc.y,effRange(S.armed)*CELL,0,Math.PI*2);
@@ -1148,6 +1676,7 @@ function draw(){
      ctx.strokeRect(S.hover.c*CELL+2.5,S.hover.r*CELL+2.5,CELL-5,CELL-5);
    }
  }
+ drawBondLines();
  /* 干员 */
  S.placed.forEach(function(p){
    var ctr=cellCenter(p.c,p.r);
@@ -1204,6 +1733,24 @@ function draw(){
    var w2=36, pct2=Math.max(0,e.hp/e.maxhp);
    ctx.fillStyle="#000"; ctx.fillRect(e.x-w2/2,e.y-e.r-11,w2,4.5);
    ctx.fillStyle="#ff5a5a"; ctx.fillRect(e.x-w2/2,e.y-e.r-11,w2*pct2,4.5);
+   if(e.aura&&e.aura.until>S.time){
+     ctx.fillStyle=EL_COLOR[e.aura.el]||"#fff"; ctx.globalAlpha=0.45;
+     ctx.beginPath(); ctx.arc(e.x,e.y,e.r+3,0,Math.PI*2); ctx.fill(); ctx.globalAlpha=1;
+     ctx.fillStyle="#fff"; ctx.font="bold 10px sans-serif"; ctx.textAlign="center"; ctx.textBaseline="middle";
+     ctx.fillText(EL_SHORT[e.aura.el]||e.aura.el,e.x,e.y-e.r-10);
+   }
+   if(e.shield>0){ ctx.strokeStyle="rgba(120,200,255,0.9)"; ctx.lineWidth=2; ctx.beginPath(); ctx.arc(e.x,e.y,e.r+6,0,Math.PI*2); ctx.stroke(); }
+   if(e.affix){
+     ctx.fillStyle="#0f2a3d"; ctx.strokeStyle="#f7d038"; ctx.lineWidth=1;
+     ctx.beginPath(); ctx.arc(e.x,e.y-e.r-22,8,0,Math.PI*2); ctx.fill(); ctx.stroke();
+     ctx.fillStyle="#f7d038"; ctx.font="bold 10px sans-serif"; ctx.textAlign="center"; ctx.textBaseline="middle";
+     ctx.fillText(AFFIX_GLYPH[e.affix]||"",e.x,e.y-e.r-22);
+   }
+   if(e.gap!=null&&e.type!=="minibug"){
+     ctx.fillStyle="rgba(0,0,0,0.45)"; ctx.fillRect(e.x-14,e.y+e.r+4,28,12);
+     ctx.fillStyle="#9fd8ff"; ctx.font="9px sans-serif"; ctx.textAlign="center"; ctx.textBaseline="middle";
+     ctx.fillText("缺"+e.gap+"e⁻",e.x,e.y+e.r+10);
+   }
  });
  /* 杀生樱图腾 */
  S.totems.forEach(function(t){
@@ -1221,7 +1768,8 @@ function draw(){
    if(f.k==="hit"){ ctx.strokeStyle=f.color; ctx.globalAlpha=a; ctx.lineWidth=2.5;
      ctx.beginPath(); ctx.moveTo(f.x-12,f.y-12); ctx.lineTo(f.x+12,f.y+12); ctx.moveTo(f.x+12,f.y-12); ctx.lineTo(f.x-12,f.y+12); ctx.stroke(); ctx.globalAlpha=1; }
    if(f.k==="dmg"){ ctx.fillStyle=f.color; ctx.globalAlpha=a; ctx.font="bold 12px monospace"; ctx.textAlign="center"; ctx.fillText(f.txt,f.x,f.y-(1-a)*22); ctx.textAlign="left"; ctx.globalAlpha=1; }
-   if(f.k==="heal"){ ctx.fillStyle=f.color; ctx.globalAlpha=a; ctx.font="bold 13px sans-serif"; ctx.textAlign="center"; ctx.fillText("+",f.x,f.y-(1-a)*18); ctx.textAlign="left"; ctx.globalAlpha=1; }
+   if(f.k==="heal"){ ctx.fillStyle=f.color; ctx.globalAlpha=a; ctx.font="bold 13px sans-serif"; ctx.textAlign="center"; ctx.fillText(f.txt||"+",f.x,f.y-(1-a)*18); ctx.textAlign="left"; ctx.globalAlpha=1; }
+   if(f.k==="react"){ ctx.fillStyle=f.color; ctx.globalAlpha=a; ctx.font="bold 15px sans-serif"; ctx.textAlign="center"; ctx.fillText(f.txt,f.x,f.y-(1-a)*26); ctx.textAlign="left"; ctx.globalAlpha=1; }
    if(f.k==="skill"){ ctx.strokeStyle=f.color; ctx.globalAlpha=a; ctx.lineWidth=3; ctx.beginPath(); ctx.arc(f.x,f.y,(1-a)*70+10,0,Math.PI*2); ctx.stroke(); ctx.globalAlpha=1; }
  });
  ctx.textAlign="left";
@@ -1255,6 +1803,7 @@ function canPlace(c,r,op){
 }
 cv.addEventListener("click",function(ev){
  if(!S.started||S.over) return;
+ if(cv._lpFired){ cv._lpFired=false; return; }
  var rect=cv.getBoundingClientRect();
  var x=(ev.clientX-rect.left)*VW/rect.width, y=(ev.clientY-rect.top)*VH/rect.height;
  var c=Math.floor(x/CELL), r=Math.floor(y/CELL);
@@ -1264,10 +1813,11 @@ cv.addEventListener("click",function(ev){
    if(!canPlace(c,r,op)){ logMsg(isMelee(op)?"近战干员只能部署在路线格上（这个格子不在路线上或已被占用）。":"远程干员只能部署在路线外的空格上。","bad"); return; }
    if(S.dp<op.cost){ logMsg("部署费用不足，等费用够了自动进入部署。","bad"); S.armed=null; S.pendingDeploy=op.key; showPendingHint(op); refreshCards(); return; }
    S.dp-=op.cost;
-   S.placed.push({def:op,c:c,r:r,hp:op.hp,cd:0.3,blocking:0,gone:false,lvl:0});
+   S.placed.push({def:op,c:c,r:r,hp:op.hp,cd:0.3,blocking:0,gone:false,lvl:0,invested:op.cost,upgGold:0,wavePlaced:S.wave,fired:false});
    sfx("deploy");
    logMsg(op.name+" 已部署（"+op.sym+" "+op.cfg+"）。","good");
    S.armed=null; hidePlaceHint();
+   computeBonds(); updateBondPanel();
    updateHUD(); refreshCards();
    return;
  }
@@ -1294,14 +1844,15 @@ function selectOp(p){
    +(d.splash>0?" · 范围伤害":"")+(d.armor?" · 减伤 "+Math.round(d.armor*100)+"%":"")
    +(d.dmgType==="arts"?" · 法术伤害（无视物防）":"")
    +"<br>"+d.tip;
- if(p.summon) document.getElementById("retreatBtn").style.display="none";
- else document.getElementById("retreatBtn").style.display="block";
- updateSkillBtn(p); updateUpgBtn(p);
+ if(p.summon){ document.getElementById("retreatBtn").style.display="none"; document.getElementById("sellBtn").style.display="none"; }
+ else { document.getElementById("retreatBtn").style.display="block"; document.getElementById("sellBtn").style.display="block"; }
+ updateSkillBtn(p); updateUpgBtn(p); updateSellBtn(p);
 }
 function clearSel(){
  S.sel=null;
  document.getElementById("selInfo").textContent="点击战场上已部署的干员，查看攻击范围与状态；点击下方干员卡进行排布与部署。";
  document.getElementById("retreatBtn").style.display="none";
+ document.getElementById("sellBtn").style.display="none";
  document.getElementById("skillBtn").style.display="none";
  document.getElementById("upgBtn").style.display="none";
 }
@@ -1311,7 +1862,22 @@ document.getElementById("retreatBtn").addEventListener("click",function(){
  S.dp=Math.min(DP_MAX,S.dp+Math.floor(p.def.cost/2));
  S.coolUntil[p.def.key]=S.time+COOL_S;
  p.gone=true; S.placed=S.placed.filter(function(q){return q!==p;});
+ computeBonds(); updateBondPanel();
  logMsg(p.def.name+" 已撤退，返还 "+Math.floor(p.def.cost/2)+" 点费用，"+COOL_S+" 秒后可再次部署。","");
+ clearSel(); updateHUD(); refreshCards();
+});
+document.getElementById("sellBtn").addEventListener("click",function(){
+ if(!S.sel||S.sel.summon) return;
+ var p=S.sel;
+ var full=(p.wavePlaced===S.wave&&!p.fired);
+ var dpR=full?(p.invested||p.def.cost):Math.floor((p.invested||p.def.cost)*0.7);
+ var gdR=full?(p.upgGold||0):Math.floor((p.upgGold||0)*0.7);
+ S.dp=Math.min(DP_MAX,S.dp+dpR);
+ S.gold+=gdR;
+ S.coolUntil[p.def.key]=S.time+COOL_S;
+ p.gone=true; S.placed=S.placed.filter(function(q){return q!==p;});
+ computeBonds(); updateBondPanel();
+ logMsg(p.def.name+" 已卖出，返还 "+dpR+" 点费用"+(gdR>0?" + "+gdR+" 金币":"")+"（"+(full?"本波未开火，全额":"70%")+"），"+COOL_S+" 秒后可再次部署。","");
  clearSel(); updateHUD(); refreshCards();
 });
 
@@ -1323,6 +1889,7 @@ document.getElementById("upgBtn").addEventListener("click",upgradeOp);
 document.getElementById("ionNext").addEventListener("click",function(){
  S.ionOpen=false;
  document.getElementById("ionMask").classList.remove("on");
+ if(S.pendingEndlessPrompt){ S.pendingEndlessPrompt=false; document.getElementById("endlessMask").classList.add("on"); return; }
  if(S.started&&!S.over) setPaused(false);
 });
 function setPaused(b){
@@ -1341,6 +1908,54 @@ document.getElementById("startBtn").addEventListener("click",function(){
  S.started=true;
  logMsg("行动开始。先点干员卡完成电子排布，再部署到战场上。","tip");
 });
+/* 音频解锁：首次手势里 resume()（iOS/微信否则前几秒静音） */
+document.getElementById("startBtn").addEventListener("touchstart",function(){ ac(); },{passive:true});
+document.getElementById("startBtn").addEventListener("touchend",function(){ ac(); },{passive:true});
+document.addEventListener("pointerdown",function(){ ac(); },{once:true});
+document.addEventListener("touchstart",function(){ ac(); },{once:true,passive:true});
+/* 每日挑战 / 无尽模式入口 */
+document.getElementById("dailyBtn").addEventListener("click",function(){ ac(); startDaily(); });
+document.getElementById("endlessBtn").addEventListener("click",function(){ ac(); startEndless(); });
+/* 无尽模式选择 */
+document.getElementById("endlessGo").addEventListener("click",function(){
+ document.getElementById("endlessMask").classList.remove("on");
+ S.endless=true;
+ logMsg("无尽模式开始：第 "+(effTotal()+1)+" 波起敌人不断变强，每 5 波一只弱化巨像。","tip");
+ setPaused(false);
+ updateHUD();
+});
+document.getElementById("endlessStop").addEventListener("click",function(){
+ document.getElementById("endlessMask").classList.remove("on");
+ gameOver(true);
+});
+/* 结算：复制战绩 / 生成海报 */
+document.getElementById("copyBtn").addEventListener("click",function(){
+ var t=resultText();
+ var btn=this;
+ function done(){ btn.textContent="✓ 已复制战绩"; setTimeout(function(){ btn.textContent="📋 复制战绩"; },2000); }
+ function fallback(){ var ta=document.createElement("textarea"); ta.value=t; document.body.appendChild(ta); ta.select(); try{ document.execCommand("copy"); done(); }catch(e){} document.body.removeChild(ta); }
+ if(navigator.clipboard&&navigator.clipboard.writeText){ navigator.clipboard.writeText(t).then(done,function(){ fallback(); }); }
+ else fallback();
+});
+document.getElementById("posterBtn").addEventListener("click",function(){ makePoster(); });
+/* 详情弹窗关闭 */
+document.getElementById("detailClose").addEventListener("click",function(){ document.getElementById("detailMask").classList.remove("on"); });
+/* 羁绊旁栏：手机浮钮 / 收起展开 */
+document.getElementById("bondFab").addEventListener("click",function(){ document.getElementById("bondPanel").classList.toggle("open"); });
+document.getElementById("bondToggle").addEventListener("click",function(){
+ var p=document.getElementById("bondPanel");
+ p.classList.toggle("collapsed");
+ this.textContent=p.classList.contains("collapsed")?"展开":"收起";
+});
+/* 战场长按已部署干员 → 详情 */
+addLongPress(cv,function(pt){
+ if(!S||!S.started||S.over) return;
+ var rect=cv.getBoundingClientRect();
+ var x=(pt.clientX-rect.left)*VW/rect.width, y=(pt.clientY-rect.top)*VH/rect.height;
+ var c=Math.floor(x/CELL), r=Math.floor(y/CELL);
+ var hit=null; S.placed.forEach(function(p){ if(p.c===c&&p.r===r) hit=p; });
+ if(hit) showOpDetail(hit.def);
+});
 
 /* 选中干员血量实时刷新（只更新血量数字，不重写整块面板，选中的文字不会被冲掉） */
 setInterval(function(){
@@ -1349,7 +1964,7 @@ setInterval(function(){
  if(S.sel){
    var hpEl=document.getElementById("selHp");
    if(hpEl){ var v=String(Math.ceil(S.sel.hp)); if(hpEl.textContent!==v) hpEl.textContent=v; }
-   updateSkillBtn(S.sel); updateUpgBtn(S.sel);
+   updateSkillBtn(S.sel); updateUpgBtn(S.sel); updateSellBtn(S.sel);
  }
 },600);
 
